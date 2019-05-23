@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Source.Payment/Source.Payment.csproj"
+                "${workspaceFolder}/Source.WebAPI/Source.WebAPI.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -17,7 +17,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/Source.Payment/Source.Payment.csproj"
+                "${workspaceFolder}/Source.WebAPI/Source.WebAPI.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -28,7 +28,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/Source.Payment/Source.Payment.csproj"
+                "${workspaceFolder}/Source.WebAPI/Source.WebAPI.csproj"
             ],
             "problemMatcher": "$tsc"
         }

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace Source.Payment
+namespace Source.WebAPI
 {
     public class Startup
     {
@@ -38,10 +38,10 @@ namespace Source.Payment
             // Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Source.Payment", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Source.WebAPI", Version = "v1" });
 
                 var basePath = AppContext.BaseDirectory;
-                var xmlPath = Path.Combine(basePath, "Source.Payment.xml");
+                var xmlPath = Path.Combine(basePath, "Source.WebAPI.xml");
                 c.IncludeXmlComments(xmlPath, true); //添加控制器层注释（true表示显示控制器注释）
             });
 

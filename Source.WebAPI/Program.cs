@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Source.Payment
+namespace Source.WebAPI
 {
     public class Program
     {
@@ -19,6 +19,11 @@ namespace Source.Payment
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.SetBasePath(Directory.GetCurrentDirectory());
+                    config.AddJsonFile("business.json", optional: false, reloadOnChange: false);
+                })
                 .UseStartup<Startup>();
     }
 }

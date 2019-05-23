@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Source.Payment
+namespace Source.WebAPI
 {
     public class HomeController : Controller
     {

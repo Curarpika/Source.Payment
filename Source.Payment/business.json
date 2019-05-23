@@ -1,0 +1,6 @@
+{
+    "Business":{
+        "Price": {"Amount":15, "Quantity":1},
+        "Bundles": [{"Amount":100, "Quantity":10},{"Amount":200, "Quantity":20}]
+    }   
+}

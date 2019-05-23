@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Source.Payment/bin/Debug/netcoreapp2.2/Source.Payment.dll",
+            "program": "${workspaceFolder}/Source.WebAPI/bin/Debug/netcoreapp2.2/Source.WebAPI.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Source.Payment",
+            "cwd": "${workspaceFolder}/Source.WebAPI",
             "stopAtEntry": false,
             "launchBrowser": {
                 "enabled": true

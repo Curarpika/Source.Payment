@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MQTTnet.AspNetCore;
 using Source.Auth.Models;
 using Source.Payment.Models;
 
@@ -39,6 +40,10 @@ namespace Source.WebAPI
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());
                     config.AddJsonFile("business.json", optional: false, reloadOnChange: false);
+                })
+                .UseKestrel(o => {
+                    o.ListenAnyIP(5050, l => l.UseMqtt()); // mqtt pipeline
+                    o.ListenAnyIP(5000); // default http pipeline
                 })
                 .UseStartup<Startup>();
     }

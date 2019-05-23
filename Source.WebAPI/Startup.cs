@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet.AspNetCore;
+using MQTTnet.Server;
 using Source.Auth.Models;
 using Source.Payment.Models;
 using Swashbuckle.AspNetCore.Swagger;
@@ -35,6 +37,17 @@ namespace Source.WebAPI
             services.AddDbContext<PaymentDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
 
+            var mqttServerOptions = new MqttServerOptionsBuilder()
+                .WithoutDefaultEndpoint()
+                .Build();
+            //this adds a hosted mqtt server to the services
+            services.AddHostedMqttServer(mqttServerOptions);
+
+            //this adds tcp server support based on Microsoft.AspNetCore.Connections.Abstractions
+            services.AddMqttConnectionHandler();
+
+            //this adds websocket support
+            services.AddMqttWebSocketServerAdapter();
             // Identity
             services.AddIdentity<BaseUser, BaseRole>()
            .AddEntityFrameworkStores<BaseAuthDbContext>()
@@ -82,9 +95,11 @@ namespace Source.WebAPI
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            
+            app.UseMqttEndpoint();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

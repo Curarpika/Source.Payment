@@ -5,8 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Source.Auth.Models;
+using Source.Payment.Models;
 
 namespace Source.WebAPI
 {
@@ -14,7 +18,19 @@ namespace Source.WebAPI
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope())
+            {
+                var identityContext = scope.ServiceProvider.GetService<BaseAuthDbContext>();
+                identityContext.Database.Migrate();
+                identityContext.EnsureSeedData();
+
+                var paymentContext = scope.ServiceProvider.GetService<PaymentDbContext>();
+                paymentContext.Database.Migrate();
+
+            }
+
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

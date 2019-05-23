@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Source.Auth.Models
 {
-    public static class MOOCExtensions {
+    public static class BaseAuthExtensions {
         public static void EnsureSeedData(this BaseAuthDbContext ctx)
         {
             if (ctx.AllMigrationsApplied())

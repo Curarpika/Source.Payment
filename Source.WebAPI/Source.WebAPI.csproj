@@ -28,4 +28,9 @@
     <Folder Include="Views\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Source.Auth\Source.Auth.csproj" />
+    <ProjectReference Include="..\Source.Payment\Source.Payment.csproj" />
+  </ItemGroup>
+
 </Project>

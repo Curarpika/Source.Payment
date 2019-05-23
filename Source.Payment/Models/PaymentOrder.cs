@@ -12,9 +12,9 @@ namespace Source.Payment
         public decimal Amount { get; set; }
         public OrderType OrderType { get; set;}
         public PayMethod PayMethod { get; set;}
+        public OrderState OrderState { get; set;}
         public String PaymentOrderId{ get; set; }
         [JsonConverter(typeof(ShortDateConverter))]
         public DateTime? PaidTime { get; set; }
-        public bool Processed {get;set;}
     }
 }

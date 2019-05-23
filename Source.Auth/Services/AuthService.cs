@@ -218,9 +218,7 @@ namespace Source.Auth.Services
                 FullName = user.FullName,
                 UserName = user.UserName,
                 PhoneNumber = user.PhoneNumber,
-                RoleList = role,
-                DeptCode = user.DeptCode,
-                CertNo = user.CertNo
+                RoleList = role
             };
             return userInfo;
         }

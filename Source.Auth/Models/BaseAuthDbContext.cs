@@ -30,7 +30,6 @@ namespace Source.Auth.Models
 
             builder.Entity<BaseUser>(entity =>
             {
-                entity.HasIndex(g => g.CertNo).IsUnique();
                 entity.HasIndex(g => g.PhoneNumber).IsUnique();
                 entity.ToTable(name: "Base_User", schema: "Security");
             });

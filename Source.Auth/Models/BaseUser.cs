@@ -25,17 +25,6 @@ namespace Source.Auth.Models
         /// </summary>
         public DateTime? LastLoginTime { get; set; }
 
-        /// <summary>
-        /// 部门编号
-        /// </summary>
-        public int? DeptCode { get; set; }
-
-        /// <summary>
-        /// 执法证号
-        /// </summary>
-        public string CertNo { get; set; }
-
-
         public string ExternalId { get; set; }
 
         [NotMapped]

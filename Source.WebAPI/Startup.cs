@@ -12,8 +12,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MQTTnet.AspNetCore;
 using MQTTnet.Server;
+using Senparc.CO2NET;
+using Senparc.CO2NET.RegisterServices;
+using Senparc.Weixin;
+using Senparc.Weixin.Entities;
+using Senparc.Weixin.RegisterServices;
+using Senparc.Weixin.TenPay;
 using Source.Auth.Models;
 using Source.Payment.Models;
 using Swashbuckle.AspNetCore.Swagger;
@@ -36,6 +43,9 @@ namespace Source.WebAPI
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
             services.AddDbContext<PaymentDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
+
+            services.AddSenparcGlobalServices(Configuration)//Senparc.CO2NET 全局注册
+                .AddSenparcWeixinServices(Configuration);//Senparc.Weixin 注册
 
             var mqttServerOptions = new MqttServerOptionsBuilder()
                 .WithoutDefaultEndpoint()
@@ -83,7 +93,7 @@ namespace Source.WebAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<SenparcSetting> senparcSetting, IOptions<SenparcWeixinSetting> senparcWeixinSetting)
         {
             if (env.IsDevelopment())
             {
@@ -113,6 +123,15 @@ namespace Source.WebAPI
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // 启动 CO2NET 全局注册，必须！
+            IRegisterService register = RegisterService.Start(env, senparcSetting.Value)
+                                                        //关于 UseSenparcGlobal() 的更多用法见 CO2NET Demo：https://github.com/Senparc/Senparc.CO2NET/blob/master/Sample/Senparc.CO2NET.Sample.netcore/Startup.cs
+                                                        .UseSenparcGlobal();
+
+            register.UseSenparcWeixin(senparcWeixinSetting.Value, senparcSetting.Value)
+                .RegisterTenpayV3(senparcWeixinSetting.Value, "【盛派网络小助手】公众号");
+
         }
     }
 }

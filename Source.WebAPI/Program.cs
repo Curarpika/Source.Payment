@@ -43,7 +43,7 @@ namespace Source.WebAPI
                 })
                 .UseKestrel(o => {
                     o.ListenAnyIP(5050, l => l.UseMqtt()); // mqtt pipeline
-                    o.ListenAnyIP(5000); // default http pipeline
+                    o.ListenAnyIP(80); // default http pipeline
                 })
                 .UseStartup<Startup>();
     }

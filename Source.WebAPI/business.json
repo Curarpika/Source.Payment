@@ -1,6 +1,9 @@
 {
     "Business":{
-        "Price": {"Amount":15, "Quantity":1},
-        "Bundles": [{"Amount":100, "Quantity":10},{"Amount":200, "Quantity":20}]
+        "Products": [
+            {"Id":"P1", "Name":"1", "Amount":15,  "CostType":"Cash", "ProductType":"Product", "Quantity":1, "Describe":"P1"},
+            {"Id":"P2", "Name":"1", "Amount":1,   "CostType":"Credit", "ProductType":"Product", "Quantity":1, "Describe":"P1"},
+            {"Id":"P3", "Name":"1", "Amount":100, "CostType":"Cash", "ProductType":"Credit","Quantity":10, "Describe":"P1"},
+            {"Id":"P4", "Name":"1", "Amount":200, "CostType":"Cash", "ProductType":"Credit","Quantity":20, "Describe":"P1"}]
     }   
 }

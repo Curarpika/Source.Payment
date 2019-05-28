@@ -50,7 +50,9 @@ using Source.Payment.TemplateMessage;
 using Source.WebAPI.Models;
 using Senparc.Weixin;
 using Senparc.Weixin.MP;
-
+using Source.Payment;
+using Microsoft.Extensions.Configuration;
+using Source.Payment.Models;
 
 namespace Source.WebAPI.Controllers
 {
@@ -66,6 +68,13 @@ namespace Source.WebAPI.Controllers
     public class TenPayV3Controller : Controller
     {
         private static TenPayV3Info _tenPayV3Info;
+        private readonly Business _biz;
+
+        public TenPayV3Controller(IConfiguration config)
+        {
+            _biz = new Business();
+            config.GetSection("Business").Bind(_biz);
+        }
 
         private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
@@ -93,15 +102,15 @@ namespace Source.WebAPI.Controllers
         /// 获取用户的OpenId
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(int productId = 0, int hc = 0)
+        public ActionResult Index(string id)
         {
-            if (productId == 0 && hc == 0)
+            if (id == null)
             {
                 return RedirectToAction("ProductList");
             }
 
             var returnUrl = string.Format("http://payment.gaodev.com/TenPayV3/JsApi");
-            var state = string.Format("{0}|{1}", productId, hc);
+            var state = id;
             var url = OAuthApi.GetAuthorizeUrl(TenPayV3Info.AppId, returnUrl, state, OAuthScope.snsapi_userinfo);
 
             return Redirect(url);
@@ -153,14 +162,13 @@ namespace Source.WebAPI.Controllers
 
         //需要OAuth登录
         [CustomOAuth(null, "/TenpayV3/OAuthCallback")]
-        public ActionResult JsApi(int productId, int hc)
+        public ActionResult JsApi(string id)
         {
             try
             {
                 //获取产品信息
-                var products = ProductModel.GetFakeProductList();
-                var product = products.FirstOrDefault(z => z.Id == productId);
-                if (product == null || product.GetHashCode() != hc)
+                var product = _biz.Products.FirstOrDefault(z => z.Id == id);
+                if (product == null)
                 {
                     return Content("商品信息不存在，或非法进入！1002");
                 }
@@ -184,7 +192,7 @@ namespace Source.WebAPI.Controllers
                 var nonceStr = TenPayV3Util.GetNoncestr();
 
                 var body = product == null ? "test" : product.Name;
-                var price = product == null ? 100 : (int)(product.Price * 100);//单位：分
+                var price = product == null ? 100 : (int)(product.Amount * 100);//单位：分
                 var xmlDataInfo = new TenPayV3UnifiedorderRequestData(TenPayV3Info.AppId, TenPayV3Info.MchId, body, sp_billno, price, HttpContext.UserHostAddress()?.ToString(), TenPayV3Info.TenPayV3Notify, Senparc.Weixin.TenPay.TenPayV3Type.JSAPI, openId, TenPayV3Info.Key, nonceStr);
 
                 var result = TenPayV3.Unifiedorder(xmlDataInfo);//调用统一订单接口
@@ -926,17 +934,16 @@ namespace Source.WebAPI.Controllers
         #region 产品展示
 
         public ActionResult ProductList()
-        {
-            var products = ProductModel.GetFakeProductList();
-            return View(products);
+        {           
+            return View(_biz);
         }
 
 
-        public ActionResult ProductItem(int productId, int hc)
+        public ActionResult ProductItem(string id)
         {
-            var products = ProductModel.GetFakeProductList();
-            var product = products.FirstOrDefault(z => z.Id == productId);
-            if (product == null || product.GetHashCode() != hc)
+            
+            var product = _biz.Products.FirstOrDefault(z => z.Id == id);
+            if (product == null)
             {
                 return Content("商品信息不存在，或非法进入！2003");
             }
@@ -945,7 +952,7 @@ namespace Source.WebAPI.Controllers
             if (Senparc.Weixin.BrowserUtility.BrowserUtility.SideInWeixinBrowser(HttpContext))
             {
                 //正在微信端，直接跳转到微信支付页面
-                return RedirectToAction("JsApi", new { productId = productId, hc = hc });
+                return RedirectToAction("JsApi", new { id = id});
             }
             else
             {

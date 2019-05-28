@@ -46,6 +46,9 @@ namespace Source.WebAPI
 
             services.AddSenparcGlobalServices(Configuration)//Senparc.CO2NET 全局注册
                 .AddSenparcWeixinServices(Configuration);//Senparc.Weixin 注册
+                
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSession();//使用Session
 
             var mqttServerOptions = new MqttServerOptionsBuilder()
                 .WithoutDefaultEndpoint()
@@ -109,6 +112,10 @@ namespace Source.WebAPI
             app.UseStaticFiles();
             app.UseCookiePolicy();
             
+            //引入EnableRequestRewind中间件
+            app.UseEnableRequestRewind();
+            app.UseSession();
+
             app.UseMqttEndpoint();
 
             app.UseSwagger();

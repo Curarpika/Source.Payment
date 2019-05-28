@@ -40,9 +40,7 @@ namespace Source.WebAPI
 
             await _mqttServer.PublishAsync("VueMqtt/publish1","123123");
 
-            Business biz = new Business();
-            _config.GetSection("Business").Bind(biz);
-            return new JsonResult(biz);
+            return View();
         }
     }
 }

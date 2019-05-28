@@ -1,4 +1,4 @@
-﻿@model Source.WebAPI.Models.ProductModel
+﻿@model Source.Payment.Models.Price
 @*DPBMARK_FILE TenPay*@
 @{
     Layout = null;
@@ -11,8 +11,10 @@
 </head>
 <body>
     <div>
-        <h1>商品名称：@Model.Name</h1>
-        <p>单价：@Model.Price.ToString("c")</p>
+        <h1>商品名称：@Model.Describe</h1>
+        <p>支付类型：@Model.CostType</p>
+        <p>单价：@Model.Amount.ToString("c")</p>
+        <p>数量：@Model.Quantity.ToString("c")</p>
     </div>
     <hr />
 

@@ -38,9 +38,26 @@ namespace Source.WebAPI
                     .Build();
             await mqttClient.ConnectAsync(mqttOptions, new System.Threading.CancellationToken());
 
-            await _mqttServer.PublishAsync("VueMqtt/publish1","123123");
+            await _mqttServer.PublishAsync("VueMqtt/publish1", "123123");
 
             return View();
+        }
+
+        public ActionResult Pay()
+        {
+            return View();
+        }
+
+        [HttpPost("Home/AjaxTest")]
+        public ActionResult AjaxTest([FromBody]PaymentOrder order)
+        {
+            var data = new
+            {
+                a = "111",
+                b = 222,
+                c = order
+            };
+            return Json(data);
         }
     }
 }

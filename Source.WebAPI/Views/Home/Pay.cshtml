@@ -1,0 +1,50 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Source - 支付</title>
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
+    <script src="~/js/source.ajax.js"></script>
+</head>
+<body>
+    <div>
+        <div>选择支付方式</div>
+        <div><input type="button" value="单次支付" onclick="order(1,null)" /></div>
+        <div><input type="button" value="余额支付" onclick="order(1,2)" /></div>
+        <div><input type="button" value="充值支付" onclick="order(0,null)" /></div>
+    </div>
+    <script>
+
+        function order(orderType, payMethod) {
+
+            let orderData = {
+                orderType: orderType,
+                payMethod: payMethod
+            };
+
+            if (payMethod == null) {
+                if (navigator.userAgent.match(/Alipay/i)) {
+                    orderData.payMethod = 0;
+                } else if (navigator.userAgent.match(/MicroMessenger\//i)) {
+                    orderData.payMethod = 1;
+                }
+                else {
+                    alert('请在微信或支付宝内打开本页面');
+                    return
+                }
+            }
+
+            post("http://192.168.31.103:5000/Home/AjaxTest", JSON.stringify(orderData)).then(function (res) {
+                console.log('Contents: ', res);
+            }, function (error) {
+                console.error('出错了', error);
+            });
+        }
+
+    </script>
+</body>
+</html>

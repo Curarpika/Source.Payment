@@ -4,294 +4,46 @@
         <name>Source.WebAPI</name>
     </assembly>
     <members>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.QrCodeTest">
-            <summary>
-            使用异步Action测试异步临时二维码接口
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.TemplateMessageTest(System.String)">
-            <summary>
-            使用异步Action测试异步模板消息接口
-            </summary>
-            <param name="checkcode"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.DeadLockTest">
-            <summary>
-            此方法会引发死锁，需要重启服务
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.NoDeadLockTest">
-            <summary>
-            此方法可以避免死锁
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.DeadLockTest2">
-            <summary>
-            此方法会引发死锁，需要重启服务
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.NoDeadLockTest2">
-            <summary>
-            此方法可以避免死锁
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.GetRemoteData2">
-            <summary>
-            此方法加上.ConfigureAwait(false)可以避免死锁
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.AsyncMethodsController.NoDeadLockTest3">
-            <summary>
-            此方法可以避免死锁
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Source.WebAPI.Controllers.DeviceController">
-            <summary>
-            设备能力测试
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.DocumentController.CheckDownload(System.String,System.String)">
-            <summary>
-            检查是否可下载
-            </summary>
-            <param name="guid"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.DocumentController.Download(System.String)">
-            <summary>
-            尝试下载
-            </summary>
-            <param name="code"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Source.WebAPI.Controllers.FilterTestController">
-            <summary>
-            演示Senparc.Weixin.MP.MvcExtension.WeixinInternalRequestAttribute
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.FilterTestController.UserAgent">
-            <summary>
-            直接输出UserAgent
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Source.WebAPI.Controllers.ForTestController">
-            <summary>
-            提供给 Senparc.WeixinTests/Utilities/HttpUtility/PostTests.cs使用
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.MediaController.TestUploadMediaFile(System.String,Senparc.Weixin.MP.UploadMediaFileType,System.Int32)">
-            <summary>
-            这个方法专为Senparc.Weixin.MP.Test/HttpUtility/RequestUtilityTest.cs/HttpPostTest() 提供上传测试目标
-            </summary>
-            <param name="token"></param>
-            <param name="type"></param>
-            <param name="contentLength"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.MenuController.GetIP">
-            <summary>
-            获得当前服务器外网IP
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.Index(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="returnUrl">用户尝试进入的需要登录的页面</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.UserInfoCallback(System.String,System.String,System.String)">
-            <summary>
-            OAuthScope.snsapi_userinfo方式回调
-            </summary>
-            <param name="code"></param>
-            <param name="state"></param>
-            <param name="returnUrl">用户最初尝试进入的页面</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.BaseCallback(System.String,System.String,System.String)">
-            <summary>
-            OAuthScope.snsapi_base方式回调
-            </summary>
-            <param name="code"></param>
-            <param name="state"></param>
-            <param name="returnUrl">用户最初尝试进入的页面</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.TestReturnUrl">
-            <summary>
-            测试ReturnUrl
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Source.WebAPI.Controllers.TenPayV3Controller">
+        <member name="T:Source.WebAPI.Controllers.WxPayController">
             <summary>
             根据官方的Webforms Demo改写，所以可以看到直接Response.Write()之类的用法，实际项目中不提倡这么做。
             </summary>
         </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.Index(System.String)">
+        <member name="M:Source.WebAPI.Controllers.WxPayController.Index(System.String)">
             <summary>
             获取用户的OpenId
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.Native">
-            <summary>
-            原生支付 模式一
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.NativeByCodeUrl">
-            <summary>
-            原生支付 模式二
-            根据统一订单返回的code_url生成支付二维码。该模式链接较短，生成的二维码打印到结账小票上的识别率较高。
-            注意：code_url有效期为2小时，过期后扫码不能再发起支付
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.MicroPay(System.String)">
-            <summary>
-            刷卡支付
-            </summary>
-            <param name="authCode">扫码设备获取到的微信用户刷卡授权码</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.PayNotifyUrl">
+        <member name="M:Source.WebAPI.Controllers.WxPayController.PayNotifyUrl">
             <summary>
             JS-SDK支付回调地址（在统一下单接口中设置notify_url）
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.OrderQuery">
+        <member name="M:Source.WebAPI.Controllers.WxPayController.OrderQuery">
             <summary>
             订单查询
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.CloseOrder">
+        <member name="M:Source.WebAPI.Controllers.WxPayController.CloseOrder">
             <summary>
             关闭订单接口
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.Refund">
+        <member name="M:Source.WebAPI.Controllers.WxPayController.Refund">
             <summary>
             退款申请接口
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.RefundNotifyUrl">
+        <member name="M:Source.WebAPI.Controllers.WxPayController.RefundNotifyUrl">
             <summary>
             退款通知地址
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.DownloadBill(System.String)">
-            <summary>
-            下载对账单
-            </summary>
-            <param name="date">日期，格式如：20170716</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.SendRedPack">
-            <summary>
-            目前支持向指定微信用户的openid发放指定金额红包
-            注意total_amount、min_value、max_value值相同
-            total_num=1固定
-            单个红包金额介于[1.00元，200.00元]之间
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.SendGroupRedPack">
-            <summary>
-            目前支持向指定微信用户的openid发放指定金额红包
-            注意total_amount、min_value、max_value值相同
-            total_num=1固定
-            单个红包金额介于[1.00元，200.00元]之间
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.ProductPayCode(System.Int32,System.Int32)">
-            <summary>
-            显示二维码
-            </summary>
-            <param name="productId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.TenPayV3Controller.H5Pay(System.Int32,System.Int32)">
-            <summary>
-            H5支付
-            </summary>
-            <param name="productId"></param>
-            <param name="hc"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Source.WebAPI.Controllers.WeixinAsyncController">
-            <summary>
-            此Controller为异步Controller（Action），使用异步线程处理并发请求。
-            为了方便演示，此Controller中没有加入多余的日志记录等示例，保持了最简单的Controller写法。日志等其他操作可以参考WeixinController.cs。
-            提示：异步Controller并不是在任何情况下都能提升效率（响应时间），当请求量非常小的时候反而会增加一定的开销。
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinAsyncController.Post(Senparc.Weixin.MP.Entities.Request.PostModel)">
-            <summary>
-            最简化的处理流程
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinAsyncController.ForTest">
-            <summary>
-            为测试并发性能而建
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinController.Get(Senparc.Weixin.MP.Entities.Request.PostModel,System.String)">
-            <summary>
-            微信后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://sdk.weixin.senparc.com/weixin
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinController.Post(Senparc.Weixin.MP.Entities.Request.PostModel)">
-            <summary>
-            用户发送消息后，微信平台自动Post一个请求到这里，并等待响应XML。
-            PS：此方法为简化方法，效果与OldPost一致。
-            v0.8之后的版本可以结合Senparc.Weixin.MP.MvcExtension扩展包，使用WeixinResult，见MiniPost方法。
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinController.MiniPost(Senparc.Weixin.MP.Entities.Request.PostModel)">
-            <summary>
-            最简化的处理流程（不加密）
-            </summary>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinController.ForTest">
-            <summary>
-            为测试并发性能而建
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinController.MultiAccountTest">
-            <summary>
-            多账号注册测试
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WeixinController.OldPost(System.String,System.String,System.String,System.String)">
-            <summary>
-            用户发送消息后，微信平台自动Post一个请求到这里，并等待响应XML
-            PS：此方法为常规switch判断方法，从v0.3.3版本起，此Demo不再更新
-            </summary>
-        </member>
-        <member name="T:Source.WebAPI.Controllers.WeixinJSSDKController">
-            <summary>
-            JSSDK的演示
-            </summary>
         </member>
         <member name="T:Source.WebAPI.Filters.CustomOAuthAttribute">
             <summary>

@@ -25,26 +25,28 @@ namespace Source.WebAPI
             _mqttServer = mqttServer;
         }
 
+        //public async Task<IActionResult> Index()
+        //{
+        //    var factory = new MqttFactory();
+        //    var mqttClient = factory.CreateMqttClient();
+        //    var mqttOptions = new MqttClientOptionsBuilder()
+        //            .WithClientId("1fasdfioifiagsf")
+        //            .WithKeepAlivePeriod(TimeSpan.FromHours(24))
+        //            .WithKeepAliveSendInterval(TimeSpan.FromSeconds(5))
+        //            .WithCleanSession()
+        //            .WithWebSocketServer("192.168.31.101:5000/mqtt")
+        //            .Build();
+        //    await mqttClient.ConnectAsync(mqttOptions, new System.Threading.CancellationToken());
+
+        //    await _mqttServer.PublishAsync("VueMqtt/publish1", "123123");
+
+        //    return View();
+        //}
+
         public async Task<IActionResult> Index()
         {
-            var factory = new MqttFactory();
-            var mqttClient = factory.CreateMqttClient();
-            var mqttOptions = new MqttClientOptionsBuilder()
-                    .WithClientId("1fasdfioifiagsf")
-                    .WithKeepAlivePeriod(TimeSpan.FromHours(24))
-                    .WithKeepAliveSendInterval(TimeSpan.FromSeconds(5))
-                    .WithCleanSession()
-                    .WithWebSocketServer("192.168.31.101:5000/mqtt")
-                    .Build();
-            await mqttClient.ConnectAsync(mqttOptions, new System.Threading.CancellationToken());
-
-            await _mqttServer.PublishAsync("VueMqtt/publish1", "123123");
-
-            return View();
-        }
-
-        public ActionResult Pay()
-        {
+            //判断是否正在微信端
+            //if (Senparc.Weixin.BrowserUtility.BrowserUtility.SideInWeixinBrowser(HttpContext))
             return View();
         }
 

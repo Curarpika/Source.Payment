@@ -137,12 +137,18 @@ namespace Source.WebAPI.Migrations.BaseAuthMigrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<decimal>("Credit");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
                     b.Property<string>("ExternalId");
+
+                    b.Property<string>("ExternalName");
+
+                    b.Property<int>("ExternalType");
 
                     b.Property<string>("FirstName");
 

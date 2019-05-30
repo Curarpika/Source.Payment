@@ -9,6 +9,6 @@ namespace Source.Payment.Models.Enums
     {
         Alipay = 0,
         Wechat = 1,
-        Balance = 2
+        Credit = 2
     }
 }

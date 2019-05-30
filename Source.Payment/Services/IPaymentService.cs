@@ -9,8 +9,8 @@ namespace Source.Payment.Services
 {
     public interface IPaymentService
     {
-        IList<PaymentOrder> GetPaymentOrders(string key, int index, int pageSize = 10, bool DateTimeDescending = true);
-        IList<PaymentOrder> GetPaidOrders();
+        (IQueryable<PaymentOrder> Orders, int Count)  GetPaymentOrders(string key, int index, int pageSize = 10, bool DateTimeDescending = true);
+        IQueryable<PaymentOrder> GetPaidOrders();
         PaymentOrder GetPaymentOrderById(Guid id); 
         // 创建订单
         PaymentOrder CreatePaymentOrder(PaymentOrder order);

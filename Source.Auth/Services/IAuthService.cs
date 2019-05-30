@@ -23,6 +23,7 @@ namespace Source.Auth.Services
         Task<BaseUser> GetUser(string username);
         Task<BaseUser> GetUserByEmailAsync(string email);
         Task<BaseUser> GetUserByEmail(string email);
+        BaseUser GetUserByExternalId(string id, int type);
 
         Task<UserInfoViewModel> GetUserInfo(string username);
         IQueryable<BaseRole> GetRoles();
@@ -39,5 +40,7 @@ namespace Source.Auth.Services
         Task<IdentityResult> UpdateUser(BaseUser user);
         Task<IdentityResult> DeleteUser(BaseUser user);
         IDictionary<string, string> GetGrantedNames(IEnumerable<string> grantedObjects);
+        Task<decimal> UpdateCredit(string id, bool isAdd, decimal credit);
+
     }
 }

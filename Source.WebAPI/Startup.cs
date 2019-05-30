@@ -22,7 +22,11 @@ using Senparc.Weixin.Entities;
 using Senparc.Weixin.RegisterServices;
 using Senparc.Weixin.TenPay;
 using Source.Auth.Models;
+using Source.Auth.Services;
+using Source.Payment.Bases;
+using Source.Payment.Interfaces;
 using Source.Payment.Models;
+using Source.Payment.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Source.WebAPI
@@ -88,6 +92,14 @@ namespace Source.WebAPI
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMemoryCache();//使用本地缓存必须添加
             services.AddSession();//使用Session
+
+            services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));
+
+            services.AddTransient<IDbContext, PaymentDbContext>();
+            
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IPaymentService, PaymentService>();
+            
 
             services.AddSenparcGlobalServices(Configuration)//Senparc.CO2NET 全局注册
                 .AddSenparcWeixinServices(Configuration);//Senparc.Weixin 注册

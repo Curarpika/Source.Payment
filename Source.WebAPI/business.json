@@ -1,9 +1,9 @@
 {
     "Business":{
         "Products": [
-            {"Id":"P1", "Name":"1", "Amount":15,  "CostType":"Cash", "ProductType":"Product", "Quantity":1, "Describe":"P1"},
-            {"Id":"P2", "Name":"1", "Amount":1,   "CostType":"Credit", "ProductType":"Product", "Quantity":1, "Describe":"P1"},
-            {"Id":"P3", "Name":"1", "Amount":100, "CostType":"Cash", "ProductType":"Credit","Quantity":10, "Describe":"P1"},
-            {"Id":"P4", "Name":"1", "Amount":200, "CostType":"Cash", "ProductType":"Credit","Quantity":20, "Describe":"P1"}]
+            {"Id":"P1", "Name":"P1", "Amount":0.01,  "CostType":"Cash", "ProductType":"Product", "Quantity":1, "Describe":"P1"},
+            {"Id":"P2", "Name":"P2", "Amount":1,   "CostType":"Credit", "ProductType":"Product", "Quantity":1, "Describe":"P1"},
+            {"Id":"P3", "Name":"P3", "Amount":0.01, "CostType":"Cash", "ProductType":"Credit","Quantity":100, "Describe":"P1"},
+            {"Id":"P4", "Name":"P4", "Amount":0.01, "CostType":"Cash", "ProductType":"Credit","Quantity":200, "Describe":"P1"}]
     }   
 }

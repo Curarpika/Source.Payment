@@ -19,16 +19,20 @@ namespace Source.WebAPI.Migrations.PaymentMigrations
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Source.Payment.Order", b =>
+            modelBuilder.Entity("Source.Payment.PaymentOrder", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount");
 
+                    b.Property<string>("Content");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedTime");
+
+                    b.Property<int>("OrderState");
 
                     b.Property<int>("OrderType");
 
@@ -38,15 +42,17 @@ namespace Source.WebAPI.Migrations.PaymentMigrations
 
                     b.Property<string>("PaymentOrderId");
 
-                    b.Property<bool>("Processed");
+                    b.Property<int>("Quantity");
 
                     b.Property<string>("UpdatedBy");
 
                     b.Property<DateTime?>("UpdatedTime");
 
+                    b.Property<string>("UserId");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("PaymentOrders");
                 });
 #pragma warning restore 612, 618
         }

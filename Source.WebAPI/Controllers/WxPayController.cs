@@ -53,6 +53,10 @@ using Senparc.Weixin.MP;
 using Source.Payment;
 using Microsoft.Extensions.Configuration;
 using Source.Payment.Models;
+using Source.Payment.Services;
+using Source.Payment.Models.Enums;
+using Source.Auth.Services;
+using System.Threading.Tasks;
 
 namespace Source.WebAPI.Controllers
 {
@@ -69,9 +73,15 @@ namespace Source.WebAPI.Controllers
     {
         private static TenPayV3Info _tenPayV3Info;
         private readonly Business _biz;
+        private readonly IAuthService _authSrv;
+        private readonly IPaymentService _paySrv;
 
-        public WxPayController(IConfiguration config)
+        public WxPayController(IConfiguration config,
+        IAuthService authSrv,
+        IPaymentService paySrv)
         {
+            _paySrv = paySrv;
+            _authSrv = authSrv;
             _biz = new Business();
             config.GetSection("Business").Bind(_biz);
         }
@@ -112,45 +122,30 @@ namespace Source.WebAPI.Controllers
         #region JsApi支付
         //需要OAuth登录
         [CustomOAuth(null, "/WxPay/OAuthCallback")]
-        public ActionResult JsApi(string id)
+        public ActionResult JsApi(Guid orderid)
         {
             try
             {
-                //获取产品信息
-                var product = _biz.Products.FirstOrDefault(z => z.Id == id);
-                if (product == null)
-                {
-                    return Content("商品信息不存在，或非法进入！1002");
-                }
-
+                
                 //var openId = User.Identity.Name;
                 var openId = HttpContext.Session.GetString("OpenId");
 
-                string sp_billno = Request.Query["order_no"];
-                if (string.IsNullOrEmpty(sp_billno))
+                var order = _paySrv.GetPaymentOrderById(orderid);
+                if(order == null)
                 {
-                    //生成订单10位序列号，此处用时间和随机数生成，商户根据自己调整，保证唯一
-                    sp_billno = string.Format("{0}{1}{2}", TenPayV3Info.MchId/*10位*/, SystemTime.Now.ToString("yyyyMMddHHmmss"),
-                        TenPayV3Util.BuildRandomStr(6));
-                }
-                else
-                {
-                    sp_billno = Request.Query["order_no"];
-                }
 
+                }
+                string sp_billno =  GuidEncoder.Encode(order.Id);
                 var timeStamp = TenPayV3Util.GetTimestamp();
                 var nonceStr = TenPayV3Util.GetNoncestr();
 
-                var body = product == null ? "test" : product.Name;
-                var price = product == null ? 100 : (int)(product.Amount * 100);//单位：分
+                var body = orderid.ToString();
+                var price = (int)(order.Amount * 100);
                 var xmlDataInfo = new TenPayV3UnifiedorderRequestData(TenPayV3Info.AppId, TenPayV3Info.MchId, body, sp_billno, price, HttpContext.UserHostAddress()?.ToString(), TenPayV3Info.TenPayV3Notify, Senparc.Weixin.TenPay.TenPayV3Type.JSAPI, openId, TenPayV3Info.Key, nonceStr);
 
                 var result = TenPayV3.Unifiedorder(xmlDataInfo);//调用统一订单接口
                                                                 //JsSdkUiPackage jsPackage = new JsSdkUiPackage(TenPayV3Info.AppId, timeStamp, nonceStr,);
-                Debug.WriteLine(result.ToString());
                 var package = string.Format("prepay_id={0}", result.prepay_id);
-
-                ViewData["product"] = product;
 
                 ViewData["appId"] = TenPayV3Info.AppId;
                 ViewData["timeStamp"] = timeStamp;
@@ -202,7 +197,7 @@ namespace Source.WebAPI.Controllers
                 }
 
                 HttpContext.Session.SetString("OpenId", openIdResult.openid);//进行登录
-                var openId = HttpContext.Session.GetString("OpenId");
+                HttpContext.Session.SetString("IdType", "1");//进行登录
                 //也可以使用FormsAuthentication等其他方法记录登录信息，如：
                 //FormsAuthentication.SetAuthCookie(openIdResult.openid,false);
 
@@ -215,14 +210,32 @@ namespace Source.WebAPI.Controllers
 
         }
 
+        private async Task<bool> Paid(Guid orderid, bool succeed)
+        {   
+            var result = _paySrv.UpdatePaymentResult(orderid, succeed);
+
+            if(result.OrderState == OrderState.Paid && result.OrderType == OrderType.AddCredit)
+            {
+                var user = _authSrv.GetUserByExternalId(result.UserId, 1);
+                if(user == null)
+                    return false;
+                await _authSrv.UpdateCredit(user.ExternalId, true, result.Quantity);
+                var processed = _paySrv.ProcessPaymentOrder(orderid);
+            }
+            return true;
+        }
+
         /// <summary>
         /// JS-SDK支付回调地址（在统一下单接口中设置notify_url）
         /// </summary>
         /// <returns></returns>
-        public ActionResult PayNotifyUrl()
+        public ActionResult PayNotifyUrl(string id)
         {
             try
             {
+                var guid = GuidEncoder.Decode(id);
+                Paid(guid, true);
+
                 ResponseHandler resHandler = new ResponseHandler(HttpContext);
 
                 string return_code = resHandler.GetParameter("return_code");
@@ -236,10 +249,13 @@ namespace Source.WebAPI.Controllers
                 {
                     res = "success";//正确的订单处理
                     //直到这里，才能认为交易真正成功了，可以进行数据库操作，但是别忘了返回规定格式的消息！
+                    // TODO
+                    _paySrv.UpdatePaymentResult(new Guid(), true);
                 }
                 else
                 {
                     res = "wrong";//错误的订单处理
+                    _paySrv.UpdatePaymentResult(new Guid(), false);
                 }
 
                 /* 这里可以进行订单处理的逻辑 */

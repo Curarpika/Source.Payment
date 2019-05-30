@@ -72,7 +72,7 @@
         // 当微信内置浏览器完成内部初始化后会触发WeixinJSBridgeReady事件。
         document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
             //公众号支付
-            jQuery('a#getBrandWCPayRequest').click(function (e) {
+            //jQuery('a#getBrandWCPayRequest').click(function (e) {
                 WeixinJSBridge.invoke('getBrandWCPayRequest', {
                     "appId": "@ViewData["appId"]", //公众号名称，由商户传入
                     "timeStamp": "@ViewData["timeStamp"]", //时间戳
@@ -94,7 +94,7 @@
                     //因此微信团队建议，当收到ok返回时，向商户后台询问是否收到交易成功的通知，若收到通知，前端展示交易成功的界面；若此时未收到通知，商户后台主动调用查询订单接口，查询订单的当前状态，并反馈给前端展示相应的界面。
                 });
 
-            });
+            //});
 
             WeixinJSBridge.log('yo~ ready.');
 

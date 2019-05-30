@@ -1,0 +1,33 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Source - 微信支付</title>
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
+    <script src="~/js/source.ajax.js"></script>
+</head>
+<body>
+    <div>
+        <div>选择支付方式</div>
+        <div><input type="button" value="单次支付" onclick="order('P1',1)" /></div>
+        <div>当前余额为："@ViewData["credit"]"<input type="button" value="余额支付" onclick="order('P2',2)" /></div>
+        <div><input type="button" value="充值支付" onclick="order('P3',1)" /></div>
+    </div>
+    <script>
+
+        function order(id ,payMethod) {
+            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&method=${payMethod}`;
+            post(url,null).then(function (res) {
+                window.location.href = res;
+            }, function (error) {
+                console.error('出错了', error);
+            });
+        }
+
+    </script>
+</body>
+</html>

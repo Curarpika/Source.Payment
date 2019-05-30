@@ -20,12 +20,17 @@ namespace Source.Auth.Models
         /// </summary>
         public string LastName { get; set; }
 
+        public decimal Credit { get; set; }
+
         /// <summary>
         /// 最后登录时间
         /// </summary>
         public DateTime? LastLoginTime { get; set; }
 
+        // alipay = 0, wechatpay = 1
+        public int ExternalType { get; set; }
         public string ExternalId { get; set; }
+        public string ExternalName { get; set; }
 
         [NotMapped]
         public string FullName

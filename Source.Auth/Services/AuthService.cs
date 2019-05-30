@@ -242,5 +242,26 @@ namespace Source.Auth.Services
         {
             throw new NotImplementedException();
         }
+
+        public BaseUser GetUserByExternalId(string id, int type)
+        {
+            var user = _userManager.Users.Where(x=>x.ExternalId == id && x.ExternalType == type).FirstOrDefault();
+            if (user == null)
+                return null;
+            else 
+                return user;
+        }
+
+        public async Task<decimal> UpdateCredit(string id, bool isAdd, decimal credit)
+        {
+            var user = _userManager.Users.Where(x=>x.ExternalId == id).FirstOrDefault();
+            if (user == null)
+                throw new ApplicationException("User Not Found");
+            if (!isAdd && user.Credit < credit)
+                throw new ApplicationException("Insufficient Credit");
+            user.Credit += isAdd ? credit : credit * -1;
+            await _userManager.UpdateAsync(user);
+            return user.Credit;
+        }
     }
 }

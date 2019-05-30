@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
+using Newtonsoft.Json;
 using Source.Auth.Models;
 using Source.Auth.Services;
 using Source.Payment;
@@ -28,7 +29,7 @@ namespace Source.WebAPI
         private readonly IMqttServer _mqttServer;
         private readonly IAuthService _authSrv;
         private readonly IPaymentService _paySrv;
-         private readonly Business _biz;
+        private readonly Business _biz;
         public HomeController(IConfiguration config,
          IMqttServer mqttServer,
          IPaymentService paySrv,
@@ -162,6 +163,13 @@ namespace Source.WebAPI
             }            
         }
 
+        [HttpPost("Home/ProcessOrder")]
+        public async Task<IActionResult> ProcessOrder(Guid orderId)
+        {
+            var processedOrder = _paySrv.ProcessPaymentOrder(orderId);
+            return Json(processedOrder);
+        }
+
         private async Task<decimal> CreditPay(PaymentOrder order)
         {   
             var openId = HttpContext.Session.GetString("OpenId");
@@ -173,8 +181,17 @@ namespace Source.WebAPI
             // 更新订单
             _paySrv.UpdatePaymentResult(order.Id, true);
 
+            // 发送订单消息
+            await SendOrder(order);
+
             // 返回余额
             return result;           
+        }
+
+        private async Task<ActionResult> SendOrder(PaymentOrder order)
+        {
+            var result = await _mqttServer.PublishAsync("PaidOrders", JsonConvert.SerializeObject(order));
+            return Json(result);
         }
 
         [HttpPost("Home/AjaxTest")]

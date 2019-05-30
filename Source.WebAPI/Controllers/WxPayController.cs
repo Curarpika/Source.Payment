@@ -57,6 +57,8 @@ using Source.Payment.Services;
 using Source.Payment.Models.Enums;
 using Source.Auth.Services;
 using System.Threading.Tasks;
+using MQTTnet.Server;
+using Newtonsoft.Json;
 
 namespace Source.WebAPI.Controllers
 {
@@ -74,12 +76,15 @@ namespace Source.WebAPI.Controllers
         private static TenPayV3Info _tenPayV3Info;
         private readonly Business _biz;
         private readonly IAuthService _authSrv;
+        private readonly IMqttServer _mqttServer;
         private readonly IPaymentService _paySrv;
 
         public WxPayController(IConfiguration config,
         IAuthService authSrv,
+        IMqttServer mqttServer,
         IPaymentService paySrv)
         {
+            _mqttServer = mqttServer;
             _paySrv = paySrv;
             _authSrv = authSrv;
             _biz = new Business();
@@ -212,17 +217,23 @@ namespace Source.WebAPI.Controllers
 
         private async Task<bool> Paid(Guid orderid, bool succeed)
         {   
-            var result = _paySrv.UpdatePaymentResult(orderid, succeed);
+            var order = _paySrv.UpdatePaymentResult(orderid, succeed);
 
-            if(result.OrderState == OrderState.Paid && result.OrderType == OrderType.AddCredit)
+            if(order.OrderState == OrderState.Paid && order.OrderType == OrderType.AddCredit)
             {
-                var user = _authSrv.GetUserByExternalId(result.UserId, 1);
+                var user = _authSrv.GetUserByExternalId(order.UserId, 1);
                 if(user == null)
                     return false;
-                await _authSrv.UpdateCredit(user.ExternalId, true, result.Quantity);
-                var processed = _paySrv.ProcessPaymentOrder(orderid);
+                await _authSrv.UpdateCredit(user.ExternalId, true, order.Quantity);
+                await SendOrder(order);
             }
             return true;
+        }
+
+        private async Task<ActionResult> SendOrder(PaymentOrder order)
+        {
+            var result = await _mqttServer.PublishAsync("PaidOrders", JsonConvert.SerializeObject(order));
+            return Json(result);
         }
 
         /// <summary>

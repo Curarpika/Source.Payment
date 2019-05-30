@@ -76,9 +76,9 @@ namespace Source.WebAPI
             var user = _authSrv.GetUserByExternalId(openId, 1);
 
             // 用户存在则获取信息，不存在则创建用户
-            if(user == null)
+            if (user == null)
             {
-                var newUser = new BaseUser { UserName = openId,  ExternalId = openId, ExternalType = 1};
+                var newUser = new BaseUser { UserName = openId, ExternalId = openId, ExternalType = 1 };
                 var result = await _authSrv.CreateUser(newUser, openId);
 
                 if (result.Succeeded)
@@ -115,8 +115,8 @@ namespace Source.WebAPI
         }
 
         [HttpPost("/Home/CreateOrder")]
-        public async  Task<IActionResult> CreateOrder(string id, PayMethod method)
-        {   
+        public async Task<IActionResult> CreateOrder(string id, PayMethod method)
+        {
             try
             {
                 var openId = HttpContext.Session.GetString("OpenId");
@@ -128,28 +128,30 @@ namespace Source.WebAPI
                 }
 
 
-                var o = new PaymentOrder(){ 
-                Content = product.Name,
-                Amount = product.Amount,
-                Quantity = product.Quantity,
-                PayMethod = product.CostType == "Cash" ? method : PayMethod.Credit, 
-                OrderType = product.ProductType == "Credit" ? OrderType.AddCredit : OrderType.Buy, 
-                UserId = openId,
-                OrderState = OrderState.WaitForPayment};
+                var o = new PaymentOrder()
+                {
+                    Content = product.Name,
+                    Amount = product.Amount,
+                    Quantity = product.Quantity,
+                    PayMethod = product.CostType == "Cash" ? method : PayMethod.Credit,
+                    OrderType = product.ProductType == "Credit" ? OrderType.AddCredit : OrderType.Buy,
+                    UserId = openId,
+                    OrderState = OrderState.WaitForPayment
+                };
                 var order = _paySrv.CreatePaymentOrder(o);
 
-                if(o.OrderType == OrderType.Buy && method == PayMethod.Credit)
+                if (o.OrderType == OrderType.Buy && method == PayMethod.Credit)
                 {
                     var result = await CreditPay(order);
-                    return Json(Url.Action("OrderResult", "Home", new {credit = result}));
+                    return Json(Url.Action("OrderResult", "Home", new { credit = result }));
                 }
-                else if(method == PayMethod.Wechat)
+                else if (method == PayMethod.Wechat)
                 {
-                    return Json(Url.Action("JsApi", "WxPay", new {orderid = order.Id}));
+                    return Json(Url.Action("JsApi", "WxPay", new { orderid = order.Id }));
                 }
-                else if(method == PayMethod.Alipay)
+                else if (method == PayMethod.Alipay)
                 {
-                    return Json(Url.Action("JsApi", "Alipay", new {orderid = order.Id}));
+                    return Json(Url.Action("JsApi", "Alipay", new { orderid = order.Id }));
                 }
                 else
                 {
@@ -157,10 +159,10 @@ namespace Source.WebAPI
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-               return BadRequest(ex.Message);
-            }            
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("Home/ProcessOrder")]
@@ -171,10 +173,10 @@ namespace Source.WebAPI
         }
 
         private async Task<decimal> CreditPay(PaymentOrder order)
-        {   
+        {
             var openId = HttpContext.Session.GetString("OpenId");
             var type = Int16.Parse(HttpContext.Session.GetString("IdType"));
-            
+
             // 扣除余额
             var result = await _authSrv.UpdateCredit(openId, false, order.Amount);
 
@@ -185,7 +187,7 @@ namespace Source.WebAPI
             await SendOrder(order);
 
             // 返回余额
-            return result;           
+            return result;
         }
 
         private async Task<ActionResult> SendOrder(PaymentOrder order)
@@ -194,16 +196,10 @@ namespace Source.WebAPI
             return Json(result);
         }
 
-        [HttpPost("Home/AjaxTest")]
-        public ActionResult AjaxTest([FromBody]PaymentOrder order)
+        [HttpPost("Home/PaySuccess")]
+        public IActionResult PaySuccess()
         {
-            var data = new
-            {
-                a = "111",
-                b = 222,
-                c = order
-            };
-            return Json(data);
+            return View();
         }
     }
 }

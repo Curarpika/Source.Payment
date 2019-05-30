@@ -131,16 +131,16 @@ namespace Source.WebAPI.Controllers
         {
             try
             {
-                
+
                 //var openId = User.Identity.Name;
                 var openId = HttpContext.Session.GetString("OpenId");
 
                 var order = _paySrv.GetPaymentOrderById(orderid);
-                if(order == null)
+                if (order == null)
                 {
                     return NotFound();
                 }
-                string sp_billno =  GuidEncoder.Encode(order.Id);
+                string sp_billno = GuidEncoder.Encode(order.Id);
                 var timeStamp = TenPayV3Util.GetTimestamp();
                 var nonceStr = TenPayV3Util.GetNoncestr();
 
@@ -157,6 +157,7 @@ namespace Source.WebAPI.Controllers
                 ViewData["nonceStr"] = nonceStr;
                 ViewData["package"] = package;
                 ViewData["paySign"] = TenPayV3.GetJsPaySign(TenPayV3Info.AppId, timeStamp, nonceStr, package, TenPayV3Info.Key);
+                ViewData["successUrl"] = Url.Action("PaySuccess", "Home");
 
                 //临时记录订单信息，留给退款申请接口测试使用
                 HttpContext.Session.SetString("BillNo", sp_billno);

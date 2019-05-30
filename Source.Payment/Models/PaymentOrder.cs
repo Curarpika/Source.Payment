@@ -1,13 +1,14 @@
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using Source.Payment.Bases;
 using Source.Payment.Models.Base;
 using Source.Payment.Models.Base.Converters;
 using Source.Payment.Models.Enums;
 
 namespace Source.Payment
 {
-    public class PaymentOrder : BaseEntity
+    public class PaymentOrder : AuditEntity
     {
         public string Content { get; set; }
         public string UserId { get; set; }

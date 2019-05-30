@@ -66,11 +66,12 @@ namespace Source.WebAPI
             return View(_biz);
         }
 
-        [CustomOAuth(null, "/WxPay/OAuthCallback")]
+        //[CustomOAuth(null, "/WxPay/OAuthCallback")]
         public async Task<IActionResult> WxPayIndex()
         {
             // 获取openId
             var openId = HttpContext.Session.GetString("OpenId");
+            openId = "123123102380";
 
             // 根据openId 查询用户
             var user = _authSrv.GetUserByExternalId(openId, 1);
@@ -88,6 +89,8 @@ namespace Source.WebAPI
                 user = newUser;
 
             }
+            // 登陆Identity用户
+            await _authSrv.Login(user);
             ViewData["credit"] = user.Credit;
             ViewData["biz"] = _biz;
 
@@ -170,6 +173,13 @@ namespace Source.WebAPI
         {
             var processedOrder = _paySrv.ProcessPaymentOrder(orderId);
             return Json(processedOrder);
+        }
+
+        public IActionResult Test()
+        {
+            var o = new PaymentOrder();
+            _paySrv.CreatePaymentOrder(o);
+            return Json(o);
         }
 
         private async Task<decimal> CreditPay(PaymentOrder order)

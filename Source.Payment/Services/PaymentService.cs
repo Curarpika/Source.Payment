@@ -87,6 +87,7 @@ namespace Source.Payment.Services
                     return null;
                 }
                 order.OrderState = succeed? OrderState.Paid : OrderState.PayFailed;
+                order.PaidTime = DateTime.Now;
                 _orderRepo.Save();
                 return order;
             }

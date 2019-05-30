@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -91,8 +92,9 @@ namespace Source.WebAPI
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddMemoryCache();//使用本地缓存必须添加
             services.AddSession();//使用Session
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
 
             // services.AddSingleton<IHostedService>(s => s.GetService<MqttHostedServer>()); 
             services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));
@@ -135,6 +137,8 @@ namespace Source.WebAPI
             {
                 c.SwaggerEndpoint("../swagger/v1/swagger.json", $"API V1 [{env.EnvironmentName}]");
             });
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

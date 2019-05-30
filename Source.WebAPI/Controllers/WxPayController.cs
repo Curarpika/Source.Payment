@@ -76,13 +76,6 @@ namespace Source.WebAPI.Controllers
             config.GetSection("Business").Bind(_biz);
         }
 
-        private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-        {
-            if (errors == SslPolicyErrors.None)
-                return true;
-            return false;
-        }
-
         public static TenPayV3Info TenPayV3Info
         {
             get
@@ -109,7 +102,7 @@ namespace Source.WebAPI.Controllers
                 return RedirectToAction("ProductList");
             }
 
-            var returnUrl = string.Format("http://payment.gaodev.com/TenPayV3/JsApi");
+            var returnUrl = string.Format("http://payment.gaodev.com/WxPay/JsApi");
             var state = id;
             var url = OAuthApi.GetAuthorizeUrl(TenPayV3Info.AppId, returnUrl, state, OAuthScope.snsapi_userinfo);
 
@@ -118,7 +111,7 @@ namespace Source.WebAPI.Controllers
 
         #region JsApi支付
         //需要OAuth登录
-        [CustomOAuth(null, "/TenpayV3/OAuthCallback")]
+        [CustomOAuth(null, "/WxPay/OAuthCallback")]
         public ActionResult JsApi(string id)
         {
             try

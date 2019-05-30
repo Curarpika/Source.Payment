@@ -26,11 +26,12 @@
                 payMethod: payMethod
             };
 
-            if (paymethod == null) {
-                if (navigator.useragent.match(/alipay/i)) {
-                    orderdata.paymethod = 0;
-                } else if (navigator.useragent.match(/micromessenger\//i)) {
-                    orderdata.paymethod = 1;
+            if (payMethod == null) {
+
+                if (navigator.userAgent.match(/Alipay/i)) {
+                    orderData.payMethod = 0;
+                } else if (navigator.userAgent.match(/MicroMessenger\//i)) {
+                    orderData.payMethod = 1;
                 }
                 else {
                     alert('请在微信或支付宝内打开本页面');
@@ -38,12 +39,12 @@
                 }
             }
 
-            post("http://192.168.31.103/Home/AjaxTest", JSON.stringify(orderData)).then(function (res) {
-                //window.location.href = "/WxPay/JsApi";
-                console.log('Contents: ', res);
-            }, function (error) {
-                console.error('出错了', error);
-            });
+            //post("http://192.168.31.103/Home/AjaxTest", JSON.stringify(orderData)).then(function (res) {
+            window.location.href = "/WxPay/JsApi";
+            //console.log('Contents: ', res);
+            //}, function (error) {
+            //    console.error('出错了', error);
+            //});
         }
 
     </script>

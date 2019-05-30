@@ -26,8 +26,6 @@
 
   <ItemGroup>
     <Folder Include="Admin\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Views\" />
   </ItemGroup>
 
   <ItemGroup>

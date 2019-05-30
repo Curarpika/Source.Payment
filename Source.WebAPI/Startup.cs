@@ -93,8 +93,6 @@ namespace Source.WebAPI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession();//使用Session
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
 
             // services.AddSingleton<IHostedService>(s => s.GetService<MqttHostedServer>()); 
             services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));

@@ -66,7 +66,7 @@ namespace Source.WebAPI
             return View(_biz);
         }
 
-        //[CustomOAuth(null, "/WxPay/OAuthCallback")]
+        [CustomOAuth(null, "/WxPay/OAuthCallback")]
         public async Task<IActionResult> WxPayIndex()
         {
             // 获取openId
@@ -173,13 +173,6 @@ namespace Source.WebAPI
         {
             var processedOrder = _paySrv.ProcessPaymentOrder(orderId);
             return Json(processedOrder);
-        }
-
-        public IActionResult Test()
-        {
-            var o = new PaymentOrder();
-            _paySrv.CreatePaymentOrder(o);
-            return Json(o);
         }
 
         private async Task<decimal> CreditPay(PaymentOrder order)

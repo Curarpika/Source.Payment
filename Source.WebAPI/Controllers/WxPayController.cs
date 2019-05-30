@@ -102,7 +102,7 @@ namespace Source.WebAPI.Controllers
                 return RedirectToAction("ProductList");
             }
 
-            var returnUrl = string.Format("http://payment.gaodev.com/WxPay/JsApi");
+            var returnUrl = $"http://payment.gaodev.com/WxPay/JsApi?id={id}";
             var state = id;
             var url = OAuthApi.GetAuthorizeUrl(TenPayV3Info.AppId, returnUrl, state, OAuthScope.snsapi_userinfo);
 
@@ -202,7 +202,7 @@ namespace Source.WebAPI.Controllers
                 }
 
                 HttpContext.Session.SetString("OpenId", openIdResult.openid);//进行登录
-
+                var openId = HttpContext.Session.GetString("OpenId");
                 //也可以使用FormsAuthentication等其他方法记录登录信息，如：
                 //FormsAuthentication.SetAuthCookie(openIdResult.openid,false);
 

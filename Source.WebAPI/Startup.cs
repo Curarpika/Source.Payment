@@ -42,29 +42,21 @@ namespace Source.WebAPI
             services.AddDbContext<BaseAuthDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
             services.AddDbContext<PaymentDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
-
-            services.AddSenparcGlobalServices(Configuration)//Senparc.CO2NET 全局注册
-                .AddSenparcWeixinServices(Configuration);//Senparc.Weixin 注册
-                
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSession();//使用Session
-
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));       
+ 
             var mqttServerOptions = new MqttServerOptionsBuilder()
                 .WithoutDefaultEndpoint()
                 .Build();
             //this adds a hosted mqtt server to the services
             services.AddHostedMqttServer(mqttServerOptions);
-
             //this adds tcp server support based on Microsoft.AspNetCore.Connections.Abstractions
             services.AddMqttConnectionHandler();
-
             //this adds websocket support
             services.AddMqttWebSocketServerAdapter();
-            // Identity
+
+        //     // Identity
             services.AddIdentity<BaseUser, BaseRole>()
-           .AddEntityFrameworkStores<BaseAuthDbContext>()
-           .AddDefaultTokenProviders();
+           .AddEntityFrameworkStores<BaseAuthDbContext>();
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -93,6 +85,12 @@ namespace Source.WebAPI
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddMemoryCache();//使用本地缓存必须添加
+            services.AddSession();//使用Session
+
+            services.AddSenparcGlobalServices(Configuration)//Senparc.CO2NET 全局注册
+                .AddSenparcWeixinServices(Configuration);//Senparc.Weixin 注册
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

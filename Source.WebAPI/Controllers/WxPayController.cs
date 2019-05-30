@@ -241,13 +241,10 @@ namespace Source.WebAPI.Controllers
         /// JS-SDK支付回调地址（在统一下单接口中设置notify_url）
         /// </summary>
         /// <returns></returns>
-        public ActionResult PayNotifyUrl(string id)
+        public async Task<ActionResult> PayNotifyUrl(string id)
         {
             try
             {
-                var guid = GuidEncoder.Decode(id);
-                Paid(guid, true);
-
                 ResponseHandler resHandler = new ResponseHandler(HttpContext);
 
                 string return_code = resHandler.GetParameter("return_code");
@@ -256,18 +253,24 @@ namespace Source.WebAPI.Controllers
                 string res = null;
 
                 resHandler.SetKey(TenPayV3Info.Key);
+                string out_trade_no = resHandler.GetParameter("out_trade_no");
+
+                //TODO id for debug
+                var guid = GuidEncoder.Decode(out_trade_no ?? id);
+                
                 //验证请求是否从微信发过来（安全）
                 if (resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS")
                 {
                     res = "success";//正确的订单处理
                     //直到这里，才能认为交易真正成功了，可以进行数据库操作，但是别忘了返回规定格式的消息！
                     // TODO
-                    _paySrv.UpdatePaymentResult(new Guid(), true);
+
+                    await Paid(guid, true);
                 }
                 else
                 {
                     res = "wrong";//错误的订单处理
-                    _paySrv.UpdatePaymentResult(new Guid(), false);
+                    await Paid(guid, true);
                 }
 
                 /* 这里可以进行订单处理的逻辑 */

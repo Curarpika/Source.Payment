@@ -71,7 +71,6 @@ namespace Source.WebAPI
         {
             // 获取openId
             var openId = HttpContext.Session.GetString("OpenId");
-            openId = "123123102380";
 
             // 根据openId 查询用户
             var user = _authSrv.GetUserByExternalId(openId, 1);

@@ -133,7 +133,7 @@ namespace Source.WebAPI.Controllers
                 var order = _paySrv.GetPaymentOrderById(orderid);
                 if(order == null)
                 {
-
+                    return NotFound();
                 }
                 string sp_billno =  GuidEncoder.Encode(order.Id);
                 var timeStamp = TenPayV3Util.GetTimestamp();
@@ -157,7 +157,7 @@ namespace Source.WebAPI.Controllers
                 HttpContext.Session.SetString("BillNo", sp_billno);
                 HttpContext.Session.SetString("BillFee", price.ToString());
 
-                return View();
+                return View(order);
             }
             catch (Exception ex)
             {

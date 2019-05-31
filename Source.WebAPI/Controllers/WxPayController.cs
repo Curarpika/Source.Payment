@@ -217,17 +217,23 @@ namespace Source.WebAPI.Controllers
         }
 
         private async Task<bool> Paid(Guid orderid, bool succeed)
-        {   
+        {
             var order = _paySrv.UpdatePaymentResult(orderid, succeed);
 
-            if(order.OrderState == OrderState.Paid && order.OrderType == OrderType.AddCredit)
+            if (order.OrderState == OrderState.Paid && order.OrderType == OrderType.AddCredit)
             {
                 var user = _authSrv.GetUserByExternalId(order.UserId, 1);
-                if(user == null)
+                if (user == null)
                     return false;
                 await _authSrv.UpdateCredit(user.ExternalId, true, order.Quantity);
+                _paySrv.ProcessPaymentOrder(orderid);
+            }
+
+            if (order.OrderState == OrderState.Paid && order.OrderType == OrderType.Buy)
+            {
                 await SendOrder(order);
             }
+
             return true;
         }
 
@@ -257,7 +263,7 @@ namespace Source.WebAPI.Controllers
 
                 //TODO id for debug
                 var guid = GuidEncoder.Decode(out_trade_no ?? id);
-                
+
                 //验证请求是否从微信发过来（安全）
                 if (resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS")
                 {

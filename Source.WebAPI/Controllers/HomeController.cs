@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using MQTTnet;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Source.Auth.Models;
 using Source.Auth.Services;
 using Source.Payment;
@@ -43,23 +45,26 @@ namespace Source.WebAPI
             _mqttServer = mqttServer;
         }
 
-        //public async Task<IActionResult> Index()
-        //{
-        //    var factory = new MqttFactory();
-        //    var mqttClient = factory.CreateMqttClient();
-        //    var mqttOptions = new MqttClientOptionsBuilder()
-        //            .WithClientId("1fasdfioifiagsf")
-        //            .WithKeepAlivePeriod(TimeSpan.FromHours(24))
-        //            .WithKeepAliveSendInterval(TimeSpan.FromSeconds(5))
-        //            .WithCleanSession()
-        //            .WithWebSocketServer("192.168.31.101:5000/mqtt")
-        //            .Build();
-        //    await mqttClient.ConnectAsync(mqttOptions, new System.Threading.CancellationToken());
+        public async Task<IActionResult> Test()
+        {
+            var factory = new MqttFactory();
+            var mqttClient = factory.CreateMqttClient();
+            var mqttOptions = new MqttClientOptionsBuilder()
+                    .WithClientId("1fasdfioifiagsf")
+                    .WithKeepAlivePeriod(TimeSpan.FromHours(24))
+                    .WithKeepAliveSendInterval(TimeSpan.FromSeconds(5))
+                    .WithCleanSession()
+                    .WithWebSocketServer("127.0.0.1/mqtt")
+                    .Build();
+            await mqttClient.ConnectAsync(mqttOptions, new System.Threading.CancellationToken());
 
-        //    await _mqttServer.PublishAsync("VueMqtt/publish1", "123123");
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            var json = JsonConvert.SerializeObject(_paySrv.GetPaidOrders().FirstOrDefault(), serializerSettings);
 
-        //    return View();
-        //}
+            await _mqttServer.PublishAsync("PaidOrders", json);
+            return View();
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -167,7 +172,7 @@ namespace Source.WebAPI
             }
         }
 
-        [HttpPost("Home/ProcessOrder")]
+        [HttpPost("/Home/ProcessOrder")]
         public async Task<IActionResult> ProcessOrder(Guid orderId)
         {
             var processedOrder = _paySrv.ProcessPaymentOrder(orderId);
@@ -198,7 +203,14 @@ namespace Source.WebAPI
             return Json(result);
         }
 
-        [HttpPost("Home/PaySuccess")]
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetPaidOrders()
+        {
+            var result = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy);
+            return Json(result);
+        }
+
+
         public IActionResult PaySuccess()
         {
             return View();

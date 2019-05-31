@@ -48,8 +48,8 @@ namespace Source.WebAPI
             services.AddDbContext<BaseAuthDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
             services.AddDbContext<PaymentDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));       
- 
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
+
             var mqttServerOptions = new MqttServerOptionsBuilder()
                 .WithoutDefaultEndpoint()
                 .Build();
@@ -60,7 +60,7 @@ namespace Source.WebAPI
             //this adds websocket support
             services.AddMqttWebSocketServerAdapter();
 
-        //     // Identity
+            //     // Identity
             services.AddIdentity<BaseUser, BaseRole>()
            .AddEntityFrameworkStores<BaseAuthDbContext>();
             services.Configure<IdentityOptions>(options =>
@@ -72,13 +72,21 @@ namespace Source.WebAPI
                 options.Password.RequireLowercase = false;
                 options.User.RequireUniqueEmail = false;
             });
-            
+
             // services.Configure<CookiePolicyOptions>(options =>
             // {
             //     // This lambda determines whether user consent for non-essential cookies is needed for a given request.
             //     options.CheckConsentNeeded = context => true;
             //     options.MinimumSameSitePolicy = SameSiteMode.None;
             // });
+
+            // Cors
+            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
 
             // Swagger
             services.AddSwaggerGen(c =>
@@ -98,10 +106,10 @@ namespace Source.WebAPI
             services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));
 
             services.AddTransient<IDbContext, PaymentDbContext>();
-            
+
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IPaymentService, PaymentService>();
-            
+
 
             services.AddSenparcGlobalServices(Configuration)//Senparc.CO2NET 全局注册
                 .AddSenparcWeixinServices(Configuration);//Senparc.Weixin 注册
@@ -123,12 +131,14 @@ namespace Source.WebAPI
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            
+
             //引入EnableRequestRewind中间件
             app.UseEnableRequestRewind();
             app.UseSession();
 
             app.UseMqttEndpoint();
+
+            app.UseCors("CorsPolicy");
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

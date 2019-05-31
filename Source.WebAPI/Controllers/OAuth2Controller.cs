@@ -49,11 +49,11 @@ namespace Source.WebAPI.Controllers
             //此页面引导用户点击授权
             ViewData["UrlUserInfo"] =
                 OAuthApi.GetAuthorizeUrl(appId,
-                "http://sdk.weixin.senparc.com/oauth2/UserInfoCallback?returnUrl=" + returnUrl.UrlEncode(),
+                "http://payment.gaodev.com/oauth2/UserInfoCallback?returnUrl=" + returnUrl.UrlEncode(),
                 state, OAuthScope.snsapi_userinfo);
             ViewData["UrlBase"] =
                 OAuthApi.GetAuthorizeUrl(appId,
-                "http://sdk.weixin.senparc.com/oauth2/BaseCallback?returnUrl=" + returnUrl.UrlEncode(),
+                "http://payment.gaodev.com/oauth2/BaseCallback?returnUrl=" + returnUrl.UrlEncode(),
                 state, OAuthScope.snsapi_base);
             return View();
         }

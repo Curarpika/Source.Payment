@@ -15,6 +15,7 @@ using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Senparc.Weixin.MP.Containers;
 using Source.Auth.Models;
 using Source.Auth.Services;
 using Source.Payment;
@@ -199,7 +200,11 @@ namespace Source.WebAPI
 
         private async Task<ActionResult> SendOrder(PaymentOrder order)
         {
-            var result = await _mqttServer.PublishAsync("PaidOrders", JsonConvert.SerializeObject(order));
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            var json = JsonConvert.SerializeObject(order, serializerSettings);
+
+            var result = await _mqttServer.PublishAsync("PaidOrders", json);
             return Json(result);
         }
 

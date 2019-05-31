@@ -162,6 +162,7 @@ namespace Source.WebAPI
 
             register.UseSenparcWeixin(senparcWeixinSetting.Value, senparcSetting.Value)
                 .RegisterTenpayV3(senparcWeixinSetting.Value, "【盛派网络小助手】公众号");
+            //AccessTokenContainer.Register(appId, appSecret, name);//命名空间：Senparc.Weixin.MP.Containers
 
         }
     }

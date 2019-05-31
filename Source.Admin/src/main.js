@@ -12,9 +12,13 @@ import store from './store'
 import router from './router'
 
 import '@/icons' // icon
-import '@/permission' // permission control
+// import '@/permission' // permission control
 
 import * as filters from './filters' // global filters
+
+import VueMqtt from 'vue-mqtt'
+
+Vue.use(VueMqtt, 'ws://payment.gaodev.com/mqtt', { clientId: 'WebClient' + parseInt(Math.random() * 100000) })
 
 /**
  * If you don't want to use mock-server
@@ -24,14 +28,14 @@ import * as filters from './filters' // global filters
  * Currently MockJs will be used in the production environment,
  * please remove it before going online! ! !
  */
-import { mockXHR } from '../mock'
-if (process.env.NODE_ENV === 'production') {
-  mockXHR()
-}
+// import { mockXHR } from '../mock'
+// if (process.env.NODE_ENV === 'production') {
+//   mockXHR()
+// }
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, {
-  size: 'small'
+  size: 'medium'
 })
 
 // register global utility filters

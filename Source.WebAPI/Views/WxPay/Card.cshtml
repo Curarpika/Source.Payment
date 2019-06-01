@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model Senparc.Weixin.MP.Helpers.JsSdkUiPackage
+@*DPBMARK_FILE MP*@
+@{
+    Layout = null;
+}
+@*
+    使用JSSDK，首先要到微信公众平台【公众号设置】下的【功能设置】里面设置“JS接口安全域名”
+*@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>公众号JSSDK演示</title>
+    <!--jQuery非JS-SDK必须-->
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="@(this.Context.Request.Scheme)://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script>
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: '@Model.AppId', // 必填，公众号的唯一标识
+            timestamp: '@Model.Timestamp', // 必填，生成签名的时间戳
+            nonceStr: '@Model.NonceStr', // 必填，生成签名的随机串
+            signature: '@Model.Signature',// 必填，签名
+            jsApiList: ['addCard'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2。详见：http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
+        });
+
+        wx.error(function (res) {
+            console.log(res);
+            alert('验证失败');
+        });
+
+        wx.ready(function () {
+            document.getElementById("addCard").onclick=function(){
+                wx.addCard({
+                    cardList: [{
+                        cardId: 'pukHe541WmaHEBgW3gACiBCD4EbY',
+                        cardExt: '@ViewData["cardExt"]'
+                    }], // 需要添加的卡券列表
+                    success: function (res) {
+                        var cardList = res.cardList; // 添加的卡券列表信息
+                    }
+                });
+            }
+        });
+    </script>
+
+</head>
+<body>
+    <h1>发卡测试</h1>
+    <div>
+        <input type="button" id="addCard" value="发卡" />
+    </div>
+
+</body>
+</html>

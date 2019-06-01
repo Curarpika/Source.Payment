@@ -1,7 +1,9 @@
 @using Senparc.Weixin.MP.AdvancedAPIs.OAuth
+@using Source.Payment
 @{
     Layout = null;
     var user = (OAuthUserInfo)ViewData["userInfo"];
+    var orders = (IQueryable<PaymentOrder>)ViewData["paidOrders"];
     var biz = ViewData["biz"] != null ? (Source.Payment.Models.Business)ViewData["biz"] : new Source.Payment.Models.Business();
     var products = biz.Products;
     var p1 = products.Where(q => q.CostType == "Cash" && q.ProductType == "Product" && q.Quantity == 1).FirstOrDefault();
@@ -31,8 +33,10 @@
                     <div class="content pay-columns pay-flex-vcenter">
                         <!--TODO 支付成功后显示？首次进来为空？-->
                         <div class="title">我的取餐码</div>
-                        <div class="codes">XUER</div>
-                        <div class="codes">MXCN</div>
+                        @foreach (var o in orders)
+                        {
+                            <div class="codes">@o.Code</div>
+                        }
                     </div>
                 </div>
             </div>

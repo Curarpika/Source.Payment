@@ -103,11 +103,14 @@ namespace Source.WebAPI
                 user = newUser;
 
             }
+            var paidOrders = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy && q.UserId == openId);
+
             // 登陆Identity用户
             await _authSrv.Login(user);
             ViewData["credit"] = user.Credit;
             ViewData["biz"] = _biz;
             ViewData["userInfo"] = userInfo;
+            ViewData["paidOrders"] = paidOrders;
 
             return View();
             // 前端菜单：直接支付，跳转js支付，余额支付跳转/Home/CreditPay，套餐支付：

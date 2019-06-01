@@ -59,6 +59,7 @@ using Source.Auth.Services;
 using System.Threading.Tasks;
 using MQTTnet.Server;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Source.WebAPI.Controllers
 {
@@ -157,7 +158,7 @@ namespace Source.WebAPI.Controllers
                 ViewData["nonceStr"] = nonceStr;
                 ViewData["package"] = package;
                 ViewData["paySign"] = TenPayV3.GetJsPaySign(TenPayV3Info.AppId, timeStamp, nonceStr, package, TenPayV3Info.Key);
-                ViewData["successUrl"] = Url.Action("PaySuccess", "Home");
+                ViewData["successUrl"] = Url.Action("WxPayOrder", "Home", new { orderid = order.Id });
 
                 //临时记录订单信息，留给退款申请接口测试使用
                 HttpContext.Session.SetString("BillNo", sp_billno);

@@ -1,0 +1,75 @@
+﻿@{
+    Layout = null;
+    var biz = ViewData["biz"] != null ? (Source.Payment.Models.Business)ViewData["biz"] : new Source.Payment.Models.Business();
+    var products = biz.Products;
+    var prices = products.Where(q => q.CostType == "Cash" && q.ProductType == "Credit").ToList();
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Source - 微信支付</title>
+    <link rel="stylesheet" type="text/css" href="~/css/pay.css" />
+    <script src="~/js/source.ajax.js"></script>
+</head>
+<body>
+    <div class="pay-margin">
+        <div class="pay-buy-coupon-title">
+            <div class="text">消费券套餐</div>
+        </div>
+        <div class="pay-buy-coupon-list">
+            @{
+                for (int i = 0; i < prices.Count(); i++)
+                {
+                    <div pid="@prices[i].Id" amount="@prices[i].Amount" class="pay-buy-coupon @(i==0?"select":"default")" onclick="select(this)">
+                        <div class="pay-rows pay-space-between">
+                            <div class="name">消费券  x @prices[i].Quantity</div>
+                            <div class="amount">￥@prices[i].Amount</div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="btn-group pay-rows pay-flex-center" onclick="order()">
+            <div class="pay-btn-confirm">
+                <div class="btn-title">支付 ￥<span id="amount">@products[0].Amount</span></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var selectedPriceId = '@products[0].Id'
+
+        function select(obj) {
+            var prices = document.getElementsByClassName('pay-buy-coupon')
+
+            for (var i = 0; i < prices.length; i++) {
+                prices[i].className = prices[i].className.replace('select', 'default')
+            }
+
+            obj.className = obj.className.replace('default', 'select')
+
+            var amount = document.getElementById('amount')
+            amount.innerHTML = obj.attributes.amount.value
+            selectedPriceId = obj.attributes.pid.value
+        }
+
+        function order() {
+
+            var id = selectedPriceId
+            if (id == null) {
+                alert("请选择套餐")
+                return
+            }
+
+            var payMethod = 1
+            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&method=${payMethod}`
+            post(url, null).then(function (res) {
+                window.location.href = res
+            }, function (error) {
+                console.error('出错了', error)
+            })
+        }
+    </script>
+</body>
+</html>

@@ -596,12 +596,12 @@ namespace Source.WebAPI.Controllers
                 var jssdkUiPackage = JSSDKHelper.GetJsSdkUiPackage(TenPayV3Info.AppId, TenPayV3Info.AppSecret, Request.AbsoluteUri());
 
                 var api_ticket = WxCardApiTicketContainer.TryGetWxCardApiTicket(TenPayV3Info.AppId, TenPayV3Info.AppSecret);
-                var openId = HttpContext.Session.GetString("OpenId");
+                // var openId = HttpContext.Session.GetString("OpenId");
                 var timeStamp = TenPayV3Util.GetTimestamp();
                 var nonceStr = TenPayV3Util.GetNoncestr();
-                var cardExt = JSSDKHelper.GetcardExtSign(api_ticket, timeStamp, "pukHe541WmaHEBgW3gACiBCD4EbY", nonceStr, "", openId);
-
-                ViewData["cardExt"] = cardExt;
+                var sign = JSSDKHelper.GetcardExtSign(api_ticket, timeStamp, "pukHe541WmaHEBgW3gACiBCD4EbY", nonceStr);
+                var cardExt = new { timestamp = timeStamp, signature = sign, nonce_str = nonceStr};
+                ViewData["cardExt"] = JsonConvert.SerializeObject(cardExt);
                 return View(jssdkUiPackage);
             }
             catch (Exception ex)

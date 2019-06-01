@@ -21,6 +21,7 @@ using Senparc.CO2NET;
 using Senparc.CO2NET.RegisterServices;
 using Senparc.Weixin;
 using Senparc.Weixin.Entities;
+using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.RegisterServices;
 using Senparc.Weixin.TenPay;
 using Source.Auth.Models;
@@ -100,6 +101,7 @@ namespace Source.WebAPI
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddMemoryCache();
             services.AddSession();//使用Session
 
             // services.AddSingleton<IHostedService>(s => s.GetService<MqttHostedServer>()); 

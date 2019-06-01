@@ -73,7 +73,8 @@ namespace Source.WebAPI
         }
 
         public async Task<IActionResult> Index()
-        {               
+        {
+               
             return View(_biz);
         }
 

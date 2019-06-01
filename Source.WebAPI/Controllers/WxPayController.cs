@@ -60,6 +60,7 @@ using System.Threading.Tasks;
 using MQTTnet.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Senparc.Weixin.MP.Containers;
 
 namespace Source.WebAPI.Controllers
 {
@@ -106,7 +107,32 @@ namespace Source.WebAPI.Controllers
                 return _tenPayV3Info;
             }
         }
+        public async Task<ActionResult> Test()
+        {
+            //注册
+            await AccessTokenContainer.RegisterAsync(TenPayV3Info.AppId, TenPayV3Info.Sub_AppSecret);
+            
+            var accessToken = AccessTokenContainer.TryGetAccessToken("wx4b58f9e96371d9ff", "43c5c4d9b8207634eb293a72ddad5bb1",true);
 
+            var token = await AccessTokenContainer.TryGetAccessTokenAsync(TenPayV3Info.AppId, TenPayV3Info.Sub_AppSecret, false);
+
+            //获取Ticket完整结果（包括当前过期秒数）
+            var ticketResult = JsApiTicketContainer.GetJsApiTicketResult(TenPayV3Info.AppId);
+
+            // //只获取Ticket字符串
+            var ticket = JsApiTicketContainer.GetJsApiTicket(TenPayV3Info.AppId);
+
+            //getNewTicket
+            {
+                ticket = JsApiTicketContainer.TryGetJsApiTicket(TenPayV3Info.AppId,  TenPayV3Info.Sub_AppSecret, false);
+
+
+                ticket = JsApiTicketContainer.TryGetJsApiTicket(TenPayV3Info.AppId, TenPayV3Info.Sub_AppSecret, true);
+                //Assert.AreNotEqual(ticketResult.ticket, ticket);//如果微信服务器缓存，此处会相同
+            }
+            return Content(token);
+        }
+        
         /// <summary>
         /// 获取用户的OpenId
         /// </summary>

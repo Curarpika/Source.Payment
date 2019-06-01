@@ -50,17 +50,17 @@
         @if (order.OrderState == OrderState.Paid)
         {
             <div class="pay-prompt pay-rows pay-flex-center">支付完成</div>
-            <div class="btn-group pay-rows pay-flex-center">
+            <div class="btn-group pay-rows pay-flex-center" onclick="back()">
                 <div class="pay-btn-confirm">
-                    <div class="btn-title"><a href="/Home/WxPayIndex?orderId=@order.Id" target="_self">去取餐</a></div>
+                    <div class="btn-title">去取餐</div>
                 </div>
             </div>
         }
         else
         {
-            <div class="btn-group pay-rows pay-flex-center">
+            <div id="pay" class="btn-group pay-rows pay-flex-center">
                 <div class="pay-btn-confirm">
-                    <div id="pay" class="btn-title">支付</div>
+                    <div class="btn-title">支付</div>
                 </div>
             </div>
         }
@@ -89,6 +89,10 @@
                 });
             }
         }, false);
+
+        function back() {
+            window.location.href = "/Home/WxPayIndex?orderId=@order.Id";
+        }
     </script>
     <style type="text/css" scoped>
         a {

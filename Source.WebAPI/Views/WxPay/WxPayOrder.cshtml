@@ -60,14 +60,14 @@
         {
             <div class="btn-group pay-rows pay-flex-center">
                 <div class="pay-btn-confirm">
-                    <div class="btn-title" onclick="pay()">支付</div>
+                    <div id="pay" class="btn-title">支付</div>
                 </div>
             </div>
         }
     </div>
     <script>
         document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
-            function pay() {
+            document.getElementById("pay").onclick=function(){
                 WeixinJSBridge.invoke('getBrandWCPayRequest', {
                     "appId": "@ViewData["appId"]", //公众号名称，由商户传入
                     "timeStamp": "@ViewData["timeStamp"]", //时间戳

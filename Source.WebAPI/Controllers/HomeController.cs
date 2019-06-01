@@ -77,7 +77,7 @@ namespace Source.WebAPI
             return View(_biz);
         }
 
-        //[CustomOAuth(null, "/WxPay/OAuthCallback")]
+        [CustomOAuth(null, "/WxPay/OAuthCallback")]
         public async Task<IActionResult> WxPayIndex()
         {
             // 获取openId
@@ -88,18 +88,7 @@ namespace Source.WebAPI
             var user = _authSrv.GetUserByExternalId(openId, 1);
 
             // 获取微信用户信息
-            OAuthUserInfo userInfo = null;
-            try
-            {
-                //已关注，可以得到详细信息
-                userInfo = OAuthApi.GetUserInfo(accessToken, openId);
-            }
-            catch (ErrorJsonResultException ex)
-            {
-                //未关注，只能授权，无法得到详细信息
-                //这里的 ex.JsonResult 可能为："{\"errcode\":40003,\"errmsg\":\"invalid openid\"}"
-                return Content("用户未授权, 无法获取用户详情", "text/html",Encoding.UTF8);
-            }
+            OAuthUserInfo userInfo = OAuthApi.GetUserInfo(accessToken, openId);
 
             // 用户存在则获取信息，不存在则创建用户
             if (user == null)
@@ -263,6 +252,13 @@ namespace Source.WebAPI
             return Json(result);
         }
 
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetUserOrders()
+        {
+            var openId = HttpContext.Session.GetString("OpenId");
+            var result = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy && q.UserId == openId);
+            return Json(result);
+        }
 
         public IActionResult PaySuccess()
         {

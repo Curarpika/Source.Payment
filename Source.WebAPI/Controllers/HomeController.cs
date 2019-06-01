@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Cors;
@@ -15,6 +16,10 @@ using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Senparc.Weixin.Exceptions;
+using Senparc.Weixin.MP;
+using Senparc.Weixin.MP.AdvancedAPIs;
+using Senparc.Weixin.MP.AdvancedAPIs.OAuth;
 using Senparc.Weixin.MP.Containers;
 using Source.Auth.Models;
 using Source.Auth.Services;
@@ -68,7 +73,7 @@ namespace Source.WebAPI
         }
 
         public async Task<IActionResult> Index()
-        {
+        {               
             return View(_biz);
         }
 
@@ -77,9 +82,24 @@ namespace Source.WebAPI
         {
             // 获取openId
             var openId = HttpContext.Session.GetString("OpenId");
+            var accessToken = HttpContext.Session.GetString("accessToken");
 
             // 根据openId 查询用户
             var user = _authSrv.GetUserByExternalId(openId, 1);
+
+            // 获取微信用户信息
+            OAuthUserInfo userInfo = null;
+            try
+            {
+                //已关注，可以得到详细信息
+                userInfo = OAuthApi.GetUserInfo(accessToken, openId);
+            }
+            catch (ErrorJsonResultException ex)
+            {
+                //未关注，只能授权，无法得到详细信息
+                //这里的 ex.JsonResult 可能为："{\"errcode\":40003,\"errmsg\":\"invalid openid\"}"
+                return Content("用户未授权, 无法获取用户详情", "text/html",Encoding.UTF8);
+            }
 
             // 用户存在则获取信息，不存在则创建用户
             if (user == null)
@@ -98,6 +118,7 @@ namespace Source.WebAPI
             await _authSrv.Login(user);
             ViewData["credit"] = user.Credit;
             ViewData["biz"] = _biz;
+            ViewData["userInfo"] = userInfo;
 
             return View();
             // 前端菜单：直接支付，跳转js支付，余额支付跳转/Home/CreditPay，套餐支付：

@@ -59,6 +59,7 @@ using Source.Auth.Services;
 using System.Threading.Tasks;
 using MQTTnet.Server;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Source.WebAPI.Controllers
 {
@@ -203,7 +204,9 @@ namespace Source.WebAPI.Controllers
                 }
 
                 HttpContext.Session.SetString("OpenId", openIdResult.openid);//进行登录
+                HttpContext.Session.SetString("accessToken", openIdResult.access_token);//进行登录
                 HttpContext.Session.SetString("IdType", "1");//进行登录
+
                 //也可以使用FormsAuthentication等其他方法记录登录信息，如：
                 //FormsAuthentication.SetAuthCookie(openIdResult.openid,false);
 

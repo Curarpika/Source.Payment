@@ -1,5 +1,7 @@
+@using Senparc.Weixin.MP.AdvancedAPIs.OAuth
 @{
     Layout = null;
+    var userinfo = (OAuthUserInfo)ViewData["userInfo"];
 }
 <!DOCTYPE html>
 <html>
@@ -16,6 +18,8 @@
         <div><input type="button" value="单次支付" onclick="order('P1',1)" /></div>
         <div>当前余额为："@ViewData["credit"]"<input type="button" value="余额支付" onclick="order('P2',2)" /></div>
         <div><input type="button" value="充值支付" onclick="order('P3',1)" /></div>
+        <div>昵称：@userinfo.nickname</div>
+        <div>头像：@userinfo.headimgurl</div>
     </div>
     <script>
 

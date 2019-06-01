@@ -128,12 +128,10 @@ namespace Source.WebAPI.Controllers
         #region JsApi支付
         //需要OAuth登录
         [CustomOAuth(null, "/WxPay/OAuthCallback")]
-        public ActionResult JsApi(Guid orderid)
+        public ActionResult WxPayOrder(Guid orderid)
         {
             try
             {
-
-                //var openId = User.Identity.Name;
                 var openId = HttpContext.Session.GetString("OpenId");
 
                 var order = _paySrv.GetPaymentOrderById(orderid);
@@ -158,7 +156,7 @@ namespace Source.WebAPI.Controllers
                 ViewData["nonceStr"] = nonceStr;
                 ViewData["package"] = package;
                 ViewData["paySign"] = TenPayV3.GetJsPaySign(TenPayV3Info.AppId, timeStamp, nonceStr, package, TenPayV3Info.Key);
-                ViewData["successUrl"] = Url.Action("WxPayOrder", "Home", new { orderid = order.Id });
+                ViewData["successUrl"] = Url.Action("WxPayOrder", "Home");
 
                 //临时记录订单信息，留给退款申请接口测试使用
                 HttpContext.Session.SetString("BillNo", sp_billno);

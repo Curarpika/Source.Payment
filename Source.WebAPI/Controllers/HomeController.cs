@@ -191,11 +191,11 @@ namespace Source.WebAPI
                 if (o.OrderType == OrderType.Buy && method == PayMethod.Credit)
                 {
                     var result = await CreditPay(order);
-                    return Json(Url.Action("WxPayOrder", "Home", new { orderid = order.Id }));
+                    return Json(Url.Action("WxPayOrder", "WxPay", new { orderid = order.Id }));
                 }
                 else if (method == PayMethod.Wechat)
                 {
-                    return Json(Url.Action("WxPayOrder", "Home", new { orderid = order.Id }));
+                    return Json(Url.Action("WxPayOrder", "WxPay", new { orderid = order.Id }));
                 }
                 else if (method == PayMethod.Alipay)
                 {

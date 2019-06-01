@@ -60,6 +60,7 @@ using System.Threading.Tasks;
 using MQTTnet.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Senparc.Weixin.MP.Containers;
 
 namespace Source.WebAPI.Controllers
 {
@@ -156,7 +157,7 @@ namespace Source.WebAPI.Controllers
                 ViewData["nonceStr"] = nonceStr;
                 ViewData["package"] = package;
                 ViewData["paySign"] = TenPayV3.GetJsPaySign(TenPayV3Info.AppId, timeStamp, nonceStr, package, TenPayV3Info.Key);
-                ViewData["successUrl"] = Url.Action("WxPayOrder", "WxPay", new {orderid = orderid});
+                ViewData["successUrl"] = Url.Action("WxPayOrder", "WxPay", new { orderid = orderid });
 
                 //临时记录订单信息，留给退款申请接口测试使用
                 HttpContext.Session.SetString("BillNo", sp_billno);
@@ -563,5 +564,33 @@ namespace Source.WebAPI.Controllers
 
         #endregion
 
+        public IActionResult Card()
+        {
+            try
+            {
+                var jssdkUiPackage = JSSDKHelper.GetJsSdkUiPackage(TenPayV3Info.AppId, TenPayV3Info.AppSecret, Request.AbsoluteUri());
+
+                var api_ticket = WxCardApiTicketContainer.TryGetWxCardApiTicket(TenPayV3Info.AppId, TenPayV3Info.AppSecret);
+                var openId = HttpContext.Session.GetString("OpenId");
+                var timeStamp = TenPayV3Util.GetTimestamp();
+                var nonceStr = TenPayV3Util.GetNoncestr();
+                var cardExt = JSSDKHelper.GetcardExtSign(api_ticket, timeStamp, "pukHe541WmaHEBgW3gACiBCD4EbY", nonceStr, "", openId);
+
+                ViewData["cardExt"] = cardExt;
+                return View(jssdkUiPackage);
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+                msg += "<br>" + ex.StackTrace;
+                msg += "<br>==Source==<br>" + ex.Source;
+
+                if (ex.InnerException != null)
+                {
+                    msg += "<br>===InnerException===<br>" + ex.InnerException.Message;
+                }
+                return Content(msg);
+            }
+        }
     }
 }

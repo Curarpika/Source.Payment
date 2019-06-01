@@ -61,7 +61,7 @@
         // 当微信内置浏览器完成内部初始化后会触发WeixinJSBridgeReady事件。
         document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
             //公众号支付
-            jQuery('a#getBrandWCPayRequest').click(function (e) {
+            //jQuery('a#getBrandWCPayRequest').click(function (e) {
                 WeixinJSBridge.invoke('getBrandWCPayRequest', {
                     "appId": "@ViewData["appId"]", //公众号名称，由商户传入
                     "timeStamp": "@ViewData["timeStamp"]", //时间戳
@@ -82,24 +82,24 @@
                     }
                 });
 
-            });
+            //});
 
         }, false);
     </script>
 </head>
 <body>
     <div class="WCPay">
-        <a id="getBrandWCPayRequest" href="javascript:void(0);" onclick="pay()">
-            @if (Model is Source.Payment.PaymentOrder)
-            {
-                var order = (Source.Payment.PaymentOrder)Model;
-                <div class="product">
-                    您选中的商品：@order.Content<br />
-                    金额：@order.Amount.ToString("c")
-                </div>
-            }
-            <h1 class="title">确认支付</h1>
-        </a>
+        @*<a id="getBrandWCPayRequest" href="javascript:void(0);" onclick="pay()">
+                @if (Model is Source.Payment.PaymentOrder)
+                {
+                    var order = (Source.Payment.PaymentOrder)Model;
+                    <div class="product">
+                        您选中的商品：@order.Content<br />
+                        金额：@order.Amount.ToString("c")
+                    </div>
+                }
+                <h1 class="title">确认支付</h1>
+            </a>*@
     </div>
 </body>
 </html>

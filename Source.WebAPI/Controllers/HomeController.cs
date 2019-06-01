@@ -77,7 +77,7 @@ namespace Source.WebAPI
             return View(_biz);
         }
 
-        [CustomOAuth(null, "/WxPay/OAuthCallback")]
+        //[CustomOAuth(null, "/WxPay/OAuthCallback")]
         public async Task<IActionResult> WxPayIndex()
         {
             // 获取openId
@@ -122,6 +122,33 @@ namespace Source.WebAPI
 
             return View();
             // 前端菜单：直接支付，跳转js支付，余额支付跳转/Home/CreditPay，套餐支付：
+        }
+
+        public async Task<IActionResult> WxPayBuy()
+        {
+            try
+            {
+                ViewData["biz"] = _biz;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        public async Task<IActionResult> WxPayOrder(Guid orderId)
+        {
+            try
+            {
+                var order = _paySrv.GetPaymentOrderById(orderId);
+                return View(order);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [CustomOAuth(null, "/AliPay/OAuthCallback")]
@@ -172,11 +199,11 @@ namespace Source.WebAPI
                 if (o.OrderType == OrderType.Buy && method == PayMethod.Credit)
                 {
                     var result = await CreditPay(order);
-                    return Json(Url.Action("OrderResult", "Home", new { credit = result }));
+                    return Json(Url.Action("WxPayOrder", "Home", new { orderid = order.Id }));
                 }
                 else if (method == PayMethod.Wechat)
                 {
-                    return Json(Url.Action("JsApi", "WxPay", new { orderid = order.Id }));
+                    return Json(Url.Action("WxPayOrder", "Home", new { orderid = order.Id }));
                 }
                 else if (method == PayMethod.Alipay)
                 {

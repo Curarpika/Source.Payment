@@ -156,7 +156,7 @@ namespace Source.WebAPI.Controllers
                 ViewData["nonceStr"] = nonceStr;
                 ViewData["package"] = package;
                 ViewData["paySign"] = TenPayV3.GetJsPaySign(TenPayV3Info.AppId, timeStamp, nonceStr, package, TenPayV3Info.Key);
-                ViewData["successUrl"] = Url.Action("WxPayOrder", "Home");
+                ViewData["successUrl"] = Url.Action("WxPayOrder", "WxPay", new {orderid = orderid});
 
                 //临时记录订单信息，留给退款申请接口测试使用
                 HttpContext.Session.SetString("BillNo", sp_billno);

@@ -47,7 +47,7 @@
                 <div class="content">@(order.PaidTime == null ? "" : order.PaidTime.Value.ToString("yyyy-MM-dd HH:mm:ss"))</div>
             </div>
         </div>
-        @if (order.OrderState == OrderState.Paid)
+        @if (order.OrderState != OrderState.WaitForPayment)
         {
             <div class="pay-prompt pay-rows pay-flex-center">支付完成</div>
             <div class="btn-group pay-rows pay-flex-center">

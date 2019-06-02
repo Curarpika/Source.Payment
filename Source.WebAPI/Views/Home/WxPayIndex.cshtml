@@ -8,6 +8,7 @@
     var products = biz.Products;
     var p1 = products.Where(q => q.CostType == "Cash" && q.ProductType == "Product" && q.Quantity == 1).FirstOrDefault();
     var p2 = products.Where(q => q.CostType == "Credit" && q.ProductType == "Product" && q.Quantity == 1).FirstOrDefault();
+    var jssdkUiPackage = (JsSdkUiPackage)ViewData["jssdkUiPackage"];
 }
 <!DOCTYPE html>
 <html>
@@ -17,6 +18,9 @@
     <title>Source - 微信支付</title>
     <link rel="stylesheet" type="text/css" href="~/css/pay.css" />
     <script src="~/js/source.ajax.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="@(this.Context.Request.Scheme)://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
 </head>
 <body>
     <div class="pay-margin">
@@ -24,7 +28,7 @@
             <div class="top">
                 <div class="avatar"><image class="image" src="@user.headimgurl" /></div>
                 <div class="user-info pay-rows pay-space-between">
-                    <div class="username">@user.nickname</div>
+                    <div class="username">@user.nickname <span class="pay-icons pay-icons-shopping-cart shopping-cart" id="addCard" >会员卡</span></a></div>
                     <div class="coupon">剩余餐券 @ViewData["credit"] <a href="/Home/WxPayBuy" target="_self"><span class="pay-icons pay-icons-shopping-cart shopping-cart"></span></a></div>
                 </div>
             </div>
@@ -63,6 +67,34 @@
                 console.error('出错了', error);
             });
         }
+
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: '@jssdkUiPackage.AppId', // 必填，公众号的唯一标识
+            timestamp: '@jssdkUiPackage.Timestamp', // 必填，生成签名的时间戳
+            nonceStr: '@jssdkUiPackage.NonceStr', // 必填，生成签名的随机串
+            signature: '@jssdkUiPackage.Signature',// 必填，签名
+            jsApiList: ['addCard'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2。详见：http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
+        });
+
+        wx.error(function (res) {
+            console.log(res);
+            alert('验证失败');
+        });
+
+        wx.ready(function () {
+            document.getElementById("addCard").onclick=function(){
+                wx.addCard({
+                    cardList: [{
+                        cardId: 'pukHe541WmaHEBgW3gACiBCD4EbY',
+                        cardExt: '@Html.Raw(ViewData["cardExt"])'
+                    }], // 需要添加的卡券列表
+                    success: function (res) {
+                        var cardList = res.cardList; // 添加的卡券列表信息
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

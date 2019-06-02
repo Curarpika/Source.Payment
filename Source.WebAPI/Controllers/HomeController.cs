@@ -21,6 +21,8 @@ using Senparc.Weixin.MP;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.OAuth;
 using Senparc.Weixin.MP.Containers;
+using Senparc.Weixin.MP.Helpers;
+using Senparc.Weixin.TenPay.V3;
 using Source.Auth.Models;
 using Source.Auth.Services;
 using Source.Payment;
@@ -105,6 +107,16 @@ namespace Source.WebAPI
 
             }
             var paidOrders = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy && q.UserId == openId);
+            
+            // Card
+            var jssdkUiPackage = JSSDKHelper.GetJsSdkUiPackage(TenPayV3Info.AppId, TenPayV3Info.AppSecret, Request.AbsoluteUri());
+
+            var api_ticket = WxCardApiTicketContainer.TryGetWxCardApiTicket(TenPayV3Info.AppId, TenPayV3Info.AppSecret);
+            // var openId = HttpContext.Session.GetString("OpenId");
+            var timeStamp = TenPayV3Util.GetTimestamp();
+            var nonceStr = TenPayV3Util.GetNoncestr();
+            var sign = JSSDKHelper.GetcardExtSign(api_ticket, timeStamp, "pukHe541WmaHEBgW3gACiBCD4EbY", nonceStr);
+            var cardExt = new { timestamp = timeStamp, signature = sign, nonce_str = nonceStr};
 
             // 登陆Identity用户
             await _authSrv.Login(user);
@@ -112,6 +124,8 @@ namespace Source.WebAPI
             ViewData["biz"] = _biz;
             ViewData["userInfo"] = userInfo;
             ViewData["paidOrders"] = paidOrders;
+            ViewData["jssdkUiPackage"] = jssdkUiPackage;
+            ViewData["cardExt"] = JsonConvert.SerializeObject(cardExt);           
 
             return View();
             // 前端菜单：直接支付，跳转js支付，余额支付跳转/Home/CreditPay，套餐支付：

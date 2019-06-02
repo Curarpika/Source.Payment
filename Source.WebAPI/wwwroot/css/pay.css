@@ -19,10 +19,11 @@ a {text-decoration: none;}
 .pay-card-div .top{display:flex; flex-wrap:nowrap; padding-bottom:15px;}
 .pay-card-div .top .avatar{width:60px; height:60px; flex-shrink:0;}
 .pay-card-div .top .avatar .image{width:60px; height:60px; border-radius:40px;}
-.pay-card-div .top .user-info{width:100%; margin:15px 0px 15px 15px;}
-.pay-card-div .top .user-info .username {font-size:16px;}
+.pay-card-div .top .user-info{width:100%; margin:0px 0px 0px 15px;}
+.pay-card-div .top .user-info .username {font-size:16px; font-weight: bold;}
 .pay-card-div .top .user-info .coupon {color:#9D9D9E; font-size:14px;}
-.pay-card-div .top .user-info .shopping-cart{cursor:pointer; color:#E18F16; font-size:16px; margin-left:15px; }
+.pay-card-div .top .user-info .shopping-cart{color:#E18F16; font-size:16px; margin-left: 10px; padding-right: 0px;}
+.pay-card-div .top .user-info .cardnumber{color:#FFFFFF; font-size:14px; line-height: 22px; background-color:#FF9800;border-radius: 50px;padding: 0px 10px;}
 .pay-card-div .body{display:flex; flex-wrap:nowrap; padding-bottom:15px;}
 .pay-card-div .body .code-info{ width:100%; margin:15px 15px;}
 .pay-card-div .body .code-info .title{ font-size:16px; font-weight: bold; margin-bottom: 30px;}

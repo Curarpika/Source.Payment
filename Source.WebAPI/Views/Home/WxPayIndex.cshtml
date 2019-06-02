@@ -1,5 +1,6 @@
 ﻿@using Senparc.Weixin.MP.AdvancedAPIs.OAuth
 @using Source.Payment
+@using Senparc.Weixin.MP.Helpers;
 @{
     Layout = null;
     var user = (OAuthUserInfo)ViewData["userInfo"];
@@ -27,9 +28,14 @@
         <div class="pay-card-div">
             <div class="top">
                 <div class="avatar"><image class="image" src="@user.headimgurl" /></div>
-                <div class="user-info pay-rows pay-space-between">
-                    <div class="username">@user.nickname <span class="pay-icons pay-icons-shopping-cart shopping-cart" id="addCard" >会员卡</span></a></div>
-                    <div class="coupon">剩余餐券 @ViewData["credit"] <a href="/Home/WxPayBuy" target="_self"><span class="pay-icons pay-icons-shopping-cart shopping-cart"></span></a></div>
+                <div class="user-info">
+                    <div class="pay-rows pay-space-between">
+                        <div class="username">@user.nickname</div>
+                        <div class="coupon">剩余餐券 @ViewData["credit"] <a href="/Home/WxPayBuy" target="_self"><span class="pay-icons pay-icons-shopping-cart shopping-cart"></span></a></div>
+                    </div>
+                    <div class="pay-rows">
+                        <div class="cardnumber" id="addCard">领取会员卡</div>
+                    </div>
                 </div>
             </div>
             <div class="body">

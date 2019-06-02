@@ -30,6 +30,7 @@ using Source.Payment.Models;
 using Source.Payment.Models.Enums;
 using Source.Payment.Services;
 using Source.WebAPI.Filters;
+using Senparc.Weixin;
 
 namespace Source.WebAPI
 {
@@ -39,6 +40,7 @@ namespace Source.WebAPI
         private readonly IMqttServer _mqttServer;
         private readonly IAuthService _authSrv;
         private readonly IPaymentService _paySrv;
+        private static TenPayV3Info _tenPayV3Info;
         private readonly Business _biz;
         public HomeController(IConfiguration config,
          IMqttServer mqttServer,
@@ -51,6 +53,21 @@ namespace Source.WebAPI
             _biz = new Business();
             config.GetSection("Business").Bind(_biz);
             _mqttServer = mqttServer;
+        }
+
+        public static TenPayV3Info TenPayV3Info
+        {
+            get
+            {
+                if (_tenPayV3Info == null)
+                {
+                    var key = TenPayV3InfoCollection.GetKey(Config.SenparcWeixinSetting);
+
+                    _tenPayV3Info =
+                        TenPayV3InfoCollection.Data[key];
+                }
+                return _tenPayV3Info;
+            }
         }
 
         public async Task<IActionResult> Test()

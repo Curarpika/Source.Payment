@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Source.Database.Bases.Interfaces;
+using Source.Payment.Interfaces;
 
 namespace Source.Payment.Models
 {  

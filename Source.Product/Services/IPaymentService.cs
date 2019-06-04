@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Source.Payment.Services
+namespace Source.Product.Services
 {
     public interface IPaymentService
     {

@@ -106,6 +106,8 @@ namespace Source.WebAPI
 
             // services.AddSingleton<IHostedService>(s => s.GetService<MqttHostedServer>()); 
             services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();
+                
 
             services.AddTransient<IDbContext, PaymentDbContext>();
 

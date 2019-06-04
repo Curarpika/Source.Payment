@@ -295,6 +295,25 @@ namespace Source.WebAPI
             return Json(result);
         }
 
+        // TODO for Admin only
+        public async Task<IActionResult> Dashboard(string OrderBy)
+        {
+            var orders =  _paySrv.GetPaymentOrders();
+
+            var creditAdded =orders.Where(x=>x.OrderType == OrderType.AddCredit);
+            var creditAddedSum = creditAdded.Sum(x=>x.Amount);
+            var creditAddedTotal = creditAdded.Count();
+
+            var creditUsed = orders.Where(x=>x.OrderType == OrderType.Buy && x.PayMethod == PayMethod.Credit);
+            var creditUsedSum = creditUsed.Sum(x=>x.Amount);
+            var creditUsedTotal = creditUsed.Count();
+
+            var cashUsed = orders.Where(x=>x.OrderType == OrderType.Buy && x.PayMethod != PayMethod.Credit);
+            var cashUsedSum = cashUsed.Sum(x=>x.Amount);
+            var cashUsedTotal = cashUsed.Count();
+            return null;
+        }
+
         public IActionResult PaySuccess()
         {
             return View();

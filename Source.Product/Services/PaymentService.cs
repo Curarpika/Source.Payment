@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Identity;
-using Source.Payment.Bases;
-using Source.Payment.Interfaces;
-using Source.Payment.Models.Enums;
+using Source.Product.Bases;
+using Source.Product.Interfaces;
+using Source.Product.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Source.Payment.Services
+namespace Source.Product.Services
 {
     public class PaymentService : IPaymentService
     {

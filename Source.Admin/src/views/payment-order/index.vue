@@ -1,20 +1,40 @@
 <template>
   <div class="app-container">
-    <div class="filter-container" />
+    <div class="filter-container" >
+      <el-input v-model="listQuery.key" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+      </el-select>
+      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
+        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
+      </el-select>
+      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
+      </el-select>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        Search
+      </el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+        Add
+      </el-button>
+      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
+        reviewer
+      </el-checkbox>
+    </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;">
-      <el-table-column label="序号" type="index" align="center" width="70" />
-      <el-table-column label="支付时间" align="center" width="150">
+      <el-table-column label="序号11" type="index" align="center" width="70" />
+      <el-table-column label="下单时间" align="center" width="150">
         <template slot-scope="{row}">
-          <span>{{ row.paidTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.createdTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品" prop="content" align="center" min-width="150" />
-      <!-- <el-table-column label="订单类型" align="center" width="150">
+      <el-table-column label="订单类型" align="center" width="150">
         <template slot-scope="{row}">
           <el-tag>{{ row.orderType | orderTypeFilter }}</el-tag>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column label="支付方式" align="center" width="150">
         <template slot-scope="{row}">
           <el-tag>{{ row.payMethod | payMethodFilter }}</el-tag>
@@ -25,49 +45,27 @@
           <el-tag>{{ row.orderState | orderStateFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="核销码" prop="code" align="center" min-width="150" />
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button v-show="row.orderState === 1 || row.orderState === 3" :disabled="row.orderState === 3" type="primary" size="mini" @click="handleProcessOrder(row)">
-            核销
-          </el-button>
-        </template>
-      </el-table-column>
+      <el-table-column label="金额" prop="amount" align="center" width="150" />
     </el-table>
   </div>
 </template>
 
 <script>
-import { getPaidOrders, processOrder } from '@/api/payment-order'
-import waves from '@/directive/waves' // waves directive
+import { getPaymentOrders } from '@/api/payment-order'
+import waves from '@/directive/waves'
+import { debuglog } from 'util';
 
 export default {
   name: 'ComplexTable',
   directives: { waves },
-  mqtt: {
-    'PaidOrders': function(val) {
-      this.listLoading = true
-
-     
-        var str = this.uintToString(val)
-     
-        console.log('str:'+str)
-      var newOrder = JSON.parse(str)
-        this.list.unshift(newOrder)
-        this.listLoading = false
-
-
-      console.log('newOrder:'+ newOrder)
-    }
-  },
   filters: {
-    // orderTypeFilter(type) {
-    //   const orderTypeMap = {
-    //     0: '充值',
-    //     1: '消费'
-    //   }
-    //   return orderTypeMap[type] || ''
-    // },
+    orderTypeFilter(type) {
+      const orderTypeMap = {
+        0: '充值',
+        1: '消费'
+      }
+      return orderTypeMap[type] || ''
+    },
     payMethodFilter(method) {
       const payMethodMap = {
         0: '支付宝',
@@ -92,114 +90,27 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
-      temp: {},
-      rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+      listQuery: {
+        key: undefined,
+        page: 1,
+        limit: 20
       },
-      downloadLoading: false
     }
   },
   created() {
     this.getList()
   },
-  mounted () {
-    this.$mqtt.subscribe('PaidOrders')
-  },
   methods: {
     getList() {
       this.listLoading = true
-      getPaidOrders().then(res => {
-        this.list = res.data
-        this.total = res.data.length
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      getPaymentOrders(this.listQuery).then(res => {
+        this.list = res.data.data
+        this.total = res.data.total
+        this.listLoading = false
       })
     },
-    handleProcessOrder(row) {
-      processOrder(row.id).then(res => {
-        if (res) {
-          this.$message({
-            message: '核销成功',
-            type: 'success'
-          })
-
-          this.listLoading = true
-
-          setTimeout(() => {
-            const index = this.list.indexOf(row)
-            this.list.splice(index, 1)
-            this.listLoading = false
-          }, 1 * 1000)
-
-          row.orderState = 3
-         }
-      })
-    },
-    uintToString(uintArray) {
-      var encodedString = String.fromCharCode.apply(null, uintArray),
-          decodedString = decodeURIComponent(escape(encodedString));
-      return decodedString;
-    },
-    utf8ByteToUnicodeStr(utf8Bytes){
-      var unicodeStr ="";
-      for (var pos = 0; pos < utf8Bytes.length;){
-          var flag= utf8Bytes[pos];
-          var unicode = 0 ;
-          if ((flag >>>7) === 0 ) {
-              unicodeStr+= String.fromCharCode(utf8Bytes[pos]);
-              pos += 1;
-
-          } else if ((flag &0xFC) === 0xFC ){
-              unicode = (utf8Bytes[pos] & 0x3) << 30;
-              unicode |= (utf8Bytes[pos+1] & 0x3F) << 24;
-              unicode |= (utf8Bytes[pos+2] & 0x3F) << 18;
-              unicode |= (utf8Bytes[pos+3] & 0x3F) << 12;
-              unicode |= (utf8Bytes[pos+4] & 0x3F) << 6;
-              unicode |= (utf8Bytes[pos+5] & 0x3F);
-              unicodeStr+= String.fromCharCode(unicode) ;
-              pos += 6;
-
-          }else if ((flag &0xF8) === 0xF8 ){
-              unicode = (utf8Bytes[pos] & 0x7) << 24;
-              unicode |= (utf8Bytes[pos+1] & 0x3F) << 18;
-              unicode |= (utf8Bytes[pos+2] & 0x3F) << 12;
-              unicode |= (utf8Bytes[pos+3] & 0x3F) << 6;
-              unicode |= (utf8Bytes[pos+4] & 0x3F);
-              unicodeStr+= String.fromCharCode(unicode) ;
-              pos += 5;
-
-          } else if ((flag &0xF0) === 0xF0 ){
-              unicode = (utf8Bytes[pos] & 0xF) << 18;
-              unicode |= (utf8Bytes[pos+1] & 0x3F) << 12;
-              unicode |= (utf8Bytes[pos+2] & 0x3F) << 6;
-              unicode |= (utf8Bytes[pos+3] & 0x3F);
-              unicodeStr+= String.fromCharCode(unicode) ;
-              pos += 4;
-
-          } else if ((flag &0xE0) === 0xE0 ){
-              unicode = (utf8Bytes[pos] & 0x1F) << 12;;
-              unicode |= (utf8Bytes[pos+1] & 0x3F) << 6;
-              unicode |= (utf8Bytes[pos+2] & 0x3F);
-              unicodeStr+= String.fromCharCode(unicode) ;
-              pos += 3;
-
-          } else if ((flag &0xC0) === 0xC0 ){ //110
-              unicode = (utf8Bytes[pos] & 0x3F) << 6;
-              unicode |= (utf8Bytes[pos+1] & 0x3F);
-              unicodeStr+= String.fromCharCode(unicode) ;
-              pos += 2;
-
-          } else{
-              unicodeStr+= String.fromCharCode(utf8Bytes[pos]);
-              pos += 1;
-          }
-      }
-      return unicodeStr;
-  }
+    handleDetail(row) {
+    }
   }
 }
 </script>

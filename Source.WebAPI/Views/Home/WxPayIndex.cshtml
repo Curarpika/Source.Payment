@@ -63,6 +63,13 @@
                 <div class="btn-amount">1 餐券</div>
             </div>
         </div>
+
+        <div class="pay-btn pay-btn-credit" onclick="toBuy()">
+            <div class="pay-rows pay-space-between">
+                <div class="btn-name">餐券充值</div>
+                <div class="btn-amount"><span class="pay-icons pay-icons-shopping-cart shopping-cart"></span></div>
+            </div>
+        </div>
     </div>
     <script>
         function order(id, payMethod) {
@@ -72,6 +79,10 @@
             }, function (error) {
                 console.error('出错了', error);
             });
+        }
+
+        function toBuy() {
+            window.location.href = "/Home/WxPayBuy";
         }
 
         wx.config({

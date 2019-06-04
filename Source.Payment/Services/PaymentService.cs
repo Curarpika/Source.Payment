@@ -11,9 +11,9 @@ namespace Source.Payment.Services
 {
     public class PaymentService : IPaymentService
     {
-         private readonly IRepository<PaymentOrder> _orderRepo;
+        private readonly IRepository<PaymentOrder> _orderRepo;
         public PaymentService(IRepository<PaymentOrder> orderRepo)
-        {            
+        {
             _orderRepo = orderRepo;
         }
         public PaymentOrder CreatePaymentOrder(PaymentOrder order)
@@ -63,7 +63,7 @@ namespace Source.Payment.Services
             try
             {
                 var order = _orderRepo.Find(x => x.Id == id).FirstOrDefault();
-                if(order == null)
+                if (order == null)
                 {
                     return null;
                 }
@@ -82,11 +82,11 @@ namespace Source.Payment.Services
             try
             {
                 var order = _orderRepo.Find(x => x.Id == id).FirstOrDefault();
-                if(order == null)
+                if (order == null)
                 {
                     return null;
                 }
-                order.OrderState = succeed? OrderState.Paid : OrderState.PayFailed;
+                order.OrderState = succeed ? OrderState.Paid : OrderState.PayFailed;
                 order.PaidTime = DateTime.Now;
                 _orderRepo.Save();
                 return order;
@@ -97,17 +97,23 @@ namespace Source.Payment.Services
             }
         }
 
-       (IQueryable<PaymentOrder> Orders, int Count)  IPaymentService.GetPaymentOrders(string key, int index, int pageSize, bool DateTimeDescending)
+        (IQueryable<PaymentOrder> Orders, int Count) IPaymentService.GetPaymentOrders(string key, int index, int pageSize, bool DateTimeDescending)
         {
             try
             {
-                var paidOrders = _orderRepo.Find(x => x.Content.Contains(key));
+                var paidOrders = _orderRepo.All();
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    paidOrders = paidOrders.Where(q => q.Content.Contains(key));
+                }
+
                 var total = paidOrders.Count();
                 if (pageSize > 0 && index > 0)
                 {
                     paidOrders = paidOrders.OrderByDescending(e => e.CreatedTime).Skip((index - 1) * pageSize).Take(pageSize);
                 }
-                return (paidOrders,total);                
+                return (paidOrders, total);
             }
             catch (Exception)
             {

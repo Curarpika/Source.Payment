@@ -58,12 +58,19 @@ export const constantRoutes = [
   {
     path: '/payment-order',
     component: Layout,
+    meta: { title: '订单管理', icon: 'form' },
     children: [
       {
         path: 'index',
         name: 'PaymentOrder',
         component: () => import('@/views/payment-order/index'),
-        meta: { title: '支付订单', icon: 'form' }
+        meta: { title: '订单查询', icon: 'form' }
+      },
+      {
+        path: 'process-order',
+        name: 'ProcessOrder',
+        component: () => import('@/views/payment-order/process-order'),
+        meta: { title: '订单核销', icon: 'form' }
       }
     ]
   },

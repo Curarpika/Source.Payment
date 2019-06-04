@@ -93,7 +93,7 @@ namespace Source.WebAPI
 
         public async Task<IActionResult> Index()
         {
-               
+
             return View(_biz);
         }
 
@@ -124,7 +124,7 @@ namespace Source.WebAPI
 
             }
             var paidOrders = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy && q.UserId == openId);
-            
+
             // Card
             var jssdkUiPackage = JSSDKHelper.GetJsSdkUiPackage(TenPayV3Info.AppId, TenPayV3Info.AppSecret, Request.AbsoluteUri());
 
@@ -133,7 +133,7 @@ namespace Source.WebAPI
             var timeStamp = TenPayV3Util.GetTimestamp();
             var nonceStr = TenPayV3Util.GetNoncestr();
             var sign = JSSDKHelper.GetcardExtSign(api_ticket, timeStamp, "pukHe541WmaHEBgW3gACiBCD4EbY", nonceStr);
-            var cardExt = new { timestamp = timeStamp, signature = sign, nonce_str = nonceStr};
+            var cardExt = new { timestamp = timeStamp, signature = sign, nonce_str = nonceStr };
 
             // 登陆Identity用户
             await _authSrv.Login(user);
@@ -142,7 +142,7 @@ namespace Source.WebAPI
             ViewData["userInfo"] = userInfo;
             ViewData["paidOrders"] = paidOrders;
             ViewData["jssdkUiPackage"] = jssdkUiPackage;
-            ViewData["cardExt"] = JsonConvert.SerializeObject(cardExt);           
+            ViewData["cardExt"] = JsonConvert.SerializeObject(cardExt);
 
             return View();
             // 前端菜单：直接支付，跳转js支付，余额支付跳转/Home/CreditPay，套餐支付：
@@ -295,9 +295,22 @@ namespace Source.WebAPI
             return Json(result);
         }
 
-        public IActionResult PaySuccess()
+        [EnableCors("CorsPolicy")]
+        public async Task<IActionResult> GetPaymentOrders(string key, int index = 1, int pageSize = 10)
         {
-            return View();
+            try
+            {
+                var result = _paySrv.GetPaymentOrders(key, index, pageSize);
+
+                var total = result.Count;
+                var data = result.Orders;
+
+                return Json(new { data, total });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

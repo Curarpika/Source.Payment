@@ -315,11 +315,11 @@ namespace Source.WebAPI
         }
 
         [EnableCors("CorsPolicy")]
-        public async Task<IActionResult> GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int index = 1, int pageSize = 10)
+        public async Task<IActionResult> GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int pageIndex = 1, int pageSize = 10)
         {
             try
             {
-                var result = _paySrv.GetPaymentOrders(key, orderType, payMethod, orderState, index, pageSize);
+                var result = _paySrv.GetPaymentOrders(key, orderType, payMethod, orderState, pageIndex, pageSize);
                 
                 var total = result.Count;
                 var data = result.Orders;

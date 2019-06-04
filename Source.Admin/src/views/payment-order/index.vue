@@ -42,7 +42,7 @@
       <el-table-column label="金额" prop="amount" align="center" width="150" />
     </el-table>
 
-     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageIndex" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
   </div>
 </template>
@@ -79,8 +79,8 @@ export default {
         orderType:undefined,
         payMethod:undefined,
         orderState:undefined,
-        page: 1,
-        limit: 20
+        pageIndex: 1,
+        pageSize: 10
       },
       orderTypeOptions, 
       payMethodOptions,

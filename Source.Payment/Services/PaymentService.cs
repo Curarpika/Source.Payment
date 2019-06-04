@@ -110,7 +110,7 @@ namespace Source.Payment.Services
             }
         }
 
-        (IQueryable<PaymentOrder> Orders, int Count) IPaymentService.GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int index, int pageSize, bool DateTimeDescending)
+        (IQueryable<PaymentOrder> Orders, int Count) IPaymentService.GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int pageIndex, int pageSize, bool DateTimeDescending)
         {
             try
             {
@@ -137,9 +137,9 @@ namespace Source.Payment.Services
                 }
 
                 var total = paidOrders.Count();
-                if (pageSize > 0 && index > 0)
+                if (pageSize > 0 && pageIndex > 0)
                 {
-                    paidOrders = paidOrders.OrderByDescending(e => e.CreatedTime).Skip((index - 1) * pageSize).Take(pageSize);
+                    paidOrders = paidOrders.OrderByDescending(e => e.CreatedTime).Skip((pageIndex - 1) * pageSize).Take(pageSize);
                 }
                 return (paidOrders, total);
             }

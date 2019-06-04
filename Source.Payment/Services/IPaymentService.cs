@@ -10,7 +10,7 @@ namespace Source.Payment.Services
 {
     public interface IPaymentService
     {
-        (IQueryable<PaymentOrder> Orders, int Count) GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int index, int pageSize = 10, bool DateTimeDescending = true);
+        (IQueryable<PaymentOrder> Orders, int Count) GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int pageIndex, int pageSize = 10, bool DateTimeDescending = true);
         IQueryable<PaymentOrder> GetPaymentOrders();
         IQueryable<PaymentOrder> GetPaidOrders();
         PaymentOrder GetPaymentOrderById(Guid id);

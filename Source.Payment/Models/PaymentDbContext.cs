@@ -9,7 +9,7 @@ namespace Source.Payment.Models
     public class PaymentDbContext : DbContext,IDbContext
     {  
         private string _user;
-        public PaymentDbContext(DbContextOptions options, IHttpContextAccessor httpContext) : base(options)  
+        public PaymentDbContext(DbContextOptions<PaymentDbContext> options, IHttpContextAccessor httpContext) : base(options)  
         {  
             _user = httpContext?.HttpContext?.User.Identity.Name ?? httpContext?.HttpContext?.Connection.RemoteIpAddress.ToString();
         }  

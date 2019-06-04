@@ -1,25 +1,33 @@
 using Microsoft.AspNetCore.Identity;
+using Source.Database.Bases.Interfaces;
+using Source.Database.Bases.Models;
+using Source.Product.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Source.Database.Bases.Models;
-using Source.Product.Models;
+
 
 namespace Source.Product.Services
 {
     public class ProductService : IProductService
     {
         private readonly GenericRepository<ProductOrder> _orderRepo;
-        public ProductService(GenericRepository<ProductOrder> orderRepo)
+        private readonly GenericRepository<Models.Product> _prdRepo;
+        private readonly IUnitOfWork _uow;
+        public ProductService(GenericRepository<ProductOrder> orderRepo,
+        GenericRepository<Models.Product> prdRepo,
+        IUnitOfWork uow)
         {            
             _orderRepo = orderRepo;
+            _prdRepo = prdRepo;
+            _uow = uow;
         }
 
         public ProductOrder CreateProductOrder(ProductOrder order)
         {
-            throw new NotImplementedException();
+            _orderRepo.Add(order);
+            _uow.Save();
+            return order;
         }
 
         public IQueryable<ProductOrder> GetPaidOrders()

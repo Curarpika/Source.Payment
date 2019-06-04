@@ -9,7 +9,7 @@ namespace Source.Product.Models
     public class ProductDbContext : DbContext,IDbContext
     {  
         private string _user;
-        public ProductDbContext(DbContextOptions options, IHttpContextAccessor httpContext) : base(options)  
+        public ProductDbContext(DbContextOptions<ProductDbContext> options, IHttpContextAccessor httpContext) : base(options)  
         {  
             _user = httpContext?.HttpContext?.User.Identity.Name ?? httpContext?.HttpContext?.Connection.RemoteIpAddress.ToString();
         }  

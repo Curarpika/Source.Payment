@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using MQTTnet.AspNetCore;
 using Source.Auth.Models;
 using Source.Payment.Models;
+using Source.Product.Models;
 
 namespace Source.WebAPI
 {
@@ -28,6 +29,9 @@ namespace Source.WebAPI
 
                 var paymentContext = scope.ServiceProvider.GetService<PaymentDbContext>();
                 paymentContext.Database.Migrate();
+
+                var productContext = scope.ServiceProvider.GetService<ProductDbContext>();
+                productContext.Database.Migrate();
 
             }
 

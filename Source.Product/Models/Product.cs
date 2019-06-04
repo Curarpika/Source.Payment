@@ -6,7 +6,7 @@ using Source.Database.Bases.Models;
 using Source.Database.Bases.Helpers;
 
 namespace Source.Product.Models
-{ 
+{
     public class Product : AuditEntity
     {
         public string Name{get;set;}

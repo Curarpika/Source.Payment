@@ -51,6 +51,8 @@ namespace Source.WebAPI
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
             services.AddDbContext<PaymentDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
+            services.AddDbContext<ProductDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Source.WebAPI")));
 
             var mqttServerOptions = new MqttServerOptionsBuilder()
                 .WithoutDefaultEndpoint()

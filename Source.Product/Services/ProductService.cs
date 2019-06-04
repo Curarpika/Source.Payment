@@ -11,11 +11,11 @@ namespace Source.Product.Services
 {
     public class ProductService : IProductService
     {
-        private readonly GenericRepository<ProductOrder> _orderRepo;
-        private readonly GenericRepository<Models.Product> _prdRepo;
+        private readonly IRepository<ProductOrder> _orderRepo;
+        private readonly IRepository<Models.Product> _prdRepo;
         private readonly IUnitOfWork _uow;
-        public ProductService(GenericRepository<ProductOrder> orderRepo,
-        GenericRepository<Models.Product> prdRepo,
+        public ProductService(IRepository<ProductOrder> orderRepo,
+        IRepository<Models.Product> prdRepo,
         IUnitOfWork uow)
         {            
             _orderRepo = orderRepo;

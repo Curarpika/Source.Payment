@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Source.Database.Bases.Models;
-using Source.Database.Bases.Interfaces;
+using Source.Payment.Models;
+using Source.Payment.Interfaces;
 using Source.Payment.Models.Enums;
 using System;
 using System.Collections.Generic;

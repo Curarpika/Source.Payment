@@ -32,6 +32,7 @@ using Source.Payment.Models;
 using Source.Payment.Services;
 using Swashbuckle.AspNetCore.Swagger;
 using Source.Product.Models;
+using Source.Payment;
 
 namespace Source.WebAPI
 {
@@ -108,10 +109,12 @@ namespace Source.WebAPI
             services.AddSession();//使用Session
 
             // services.AddSingleton<IHostedService>(s => s.GetService<MqttHostedServer>()); 
-            services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));
-            services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();                
+            services.AddTransient(typeof(IRepository<>), typeof(Source.Database.Bases.Models.GenericRepository<>));
+            services.AddTransient(typeof(Source.Payment.Interfaces.IRepository<>), typeof(Source.Payment.Models.GenericRepository<>));
+            services.AddTransient<Source.Database.Bases.Interfaces.IUnitOfWork, Source.Database.Bases.Models.EntityFrameworkUnitOfWork>(); 
+            services.AddTransient<Source.Payment.Interfaces.IUnitOfWork, Source.Payment.Models.EntityFrameworkUnitOfWork>();
 
-            services.AddTransient<IDbContext, PaymentDbContext>();
+            services.AddTransient<Source.Payment.Interfaces.IDbContext, PaymentDbContext>();
             services.AddTransient<IDbContext, ProductDbContext>();
 
             services.AddTransient<IAuthService, AuthService>();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Source.Payment.Models;
 
-namespace Source.Auth.Models
+namespace Source.Payment.Models
 {
     public static class PaymentExtensions {
         public static void EnsureSeedData(this PaymentDbContext ctx)

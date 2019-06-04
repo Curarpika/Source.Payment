@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Identity;
-using Source.Database.Bases.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Source.Database.Bases.Models;
+using Source.Product.Models;
 
 namespace Source.Product.Services
 {

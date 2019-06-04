@@ -30,8 +30,8 @@ using Source.Database.Bases.Models;
 using Source.Database.Bases.Interfaces;
 using Source.Payment.Models;
 using Source.Payment.Services;
-using Source.Database.Bases.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using Source.Product.Models;
 
 namespace Source.WebAPI
 {

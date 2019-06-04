@@ -7,7 +7,7 @@ using Source.Database.Bases.Helpers;
 using Source.Database.Bases.Interfaces;
 using Source.Payment.Models.Enums;
 
-namespace Source.Payment
+namespace Source.Payment.Models
 {
     public class PaymentOrder : AuditEntity
     {

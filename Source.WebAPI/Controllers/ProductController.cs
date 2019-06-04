@@ -98,5 +98,11 @@ namespace Source.WebAPI.Controllers
 
              return Ok();
         }
+
+        public IActionResult Index()
+        {
+            
+            return View();
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Source.Database.Bases.Models;
 
-namespace Source.Auth.Models
+namespace Source.Product.Models
 {
     public static class ProductExtensions {
         public static void EnsureSeedData(this ProductDbContext ctx)

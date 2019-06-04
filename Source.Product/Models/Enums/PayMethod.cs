@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Source.Database.Bases.Models.Enums
+namespace Source.Product.Models.Enums
 {
     public enum PayMethod
     {

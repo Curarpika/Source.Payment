@@ -1,7 +1,8 @@
 ﻿@using Source.Payment.Models.Enums;
+@using Source.Payment.Models;
 @{
     Layout = null;
-    var order = Model != null ? (Source.Payment.PaymentOrder)Model : new Source.Payment.PaymentOrder();
+    var order = Model != null ? (Source.Payment.Models.PaymentOrder)Model : new Source.Payment.Models.PaymentOrder();
 }
 <!DOCTYPE html>
 <html>

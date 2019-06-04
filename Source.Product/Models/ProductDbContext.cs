@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Source.Database.Bases.Interfaces;
 
-namespace Source.Database.Bases.Models
+namespace Source.Product.Models
 {  
     public class ProductDbContext : DbContext,IDbContext
     {  
@@ -44,6 +44,7 @@ namespace Source.Database.Bases.Models
             return base.SaveChanges();
         }
 
+        DbSet<Product> Products { get; set; }  
         DbSet<ProductOrder> ProductOrders { get; set; }  
     }  
 }  

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Source.Product.Models;
+using Source.Database.Bases.Models;
 
 namespace Source.Auth.Models
 {
-    public static class PaymentExtensions {
-        public static void EnsureSeedData(this PaymentDbContext ctx)
+    public static class ProductExtensions {
+        public static void EnsureSeedData(this ProductDbContext ctx)
         {
             if (ctx.AllMigrationsApplied())
             {

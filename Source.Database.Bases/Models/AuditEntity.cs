@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Source.Payment.Interfaces;
-using Source.Payment.Models.Base.Converters;
+using Source.Database.Bases.Interfaces;
+using Source.Database.Bases.Helpers;
 
-namespace Source.Payment.Bases
+namespace Source.Database.Bases.Models
 {
     public abstract class AuditEntity: IAuditEntity
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Source.Payment.Interfaces
+namespace Source.Database.Bases.Interfaces
 {
     public interface IDbContext
     {

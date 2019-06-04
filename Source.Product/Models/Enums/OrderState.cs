@@ -4,17 +4,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Source.Product.Models.Enums
+namespace Source.Database.Bases.Models.Enums
 {
     public enum OrderState
     {
-        [Description("等待支付")]
-        WaitForPayment = 0,
-        [Description("已支付")]
-        Paid = 1,
-        [Description("支付失败")]
-        PayFailed = 2,
-        [Description("已核销")]
-        Processed = 3
+        [Description("已下单")]
+        Ordered = 0,
+        [Description("执行中")]
+        Excuting = 1,
+        [Description("订单完成")]
+        Excuted = 2,
     }
 }

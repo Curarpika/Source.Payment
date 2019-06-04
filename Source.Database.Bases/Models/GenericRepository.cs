@@ -6,10 +6,10 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.ComponentModel;
-using Source.Payment.Interfaces;
+using Source.Database.Bases.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace Source.Payment.Bases
+namespace Source.Database.Bases.Models
 {
 
 

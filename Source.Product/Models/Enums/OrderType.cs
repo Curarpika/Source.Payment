@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Source.Product.Models.Enums
+namespace Source.Database.Bases.Models.Enums
 {
     public enum OrderType
     {

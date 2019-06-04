@@ -2,14 +2,14 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Source.Product.Interfaces;
+using Source.Database.Bases.Interfaces;
 
-namespace Source.Product.Models
+namespace Source.Database.Bases.Models
 {  
-    public class PaymentDbContext : DbContext,IDbContext
+    public class ProductDbContext : DbContext,IDbContext
     {  
         private string _user;
-        public PaymentDbContext(DbContextOptions options, IHttpContextAccessor httpContext) : base(options)  
+        public ProductDbContext(DbContextOptions options, IHttpContextAccessor httpContext) : base(options)  
         {  
             _user = httpContext?.HttpContext?.User.Identity.Name ?? httpContext?.HttpContext?.Connection.RemoteIpAddress.ToString();
         }  
@@ -44,6 +44,6 @@ namespace Source.Product.Models
             return base.SaveChanges();
         }
 
-        DbSet<PaymentOrder> PaymentOrders { get; set; }  
+        DbSet<ProductOrder> ProductOrders { get; set; }  
     }  
 }  

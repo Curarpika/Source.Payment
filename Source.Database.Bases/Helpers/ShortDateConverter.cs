@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Source.Payment.Models.Base.Converters
+namespace Source.Database.Bases.Helpers
 {
     public class ShortDateConverter : IsoDateTimeConverter
     {

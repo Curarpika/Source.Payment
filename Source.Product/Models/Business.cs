@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Source.Product.Models
+namespace Source.Database.Bases.Models
 {
     public class Business
     {

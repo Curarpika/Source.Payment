@@ -26,10 +26,11 @@ using Senparc.Weixin.RegisterServices;
 using Senparc.Weixin.TenPay;
 using Source.Auth.Models;
 using Source.Auth.Services;
-using Source.Payment.Bases;
-using Source.Payment.Interfaces;
+using Source.Database.Bases.Models;
+using Source.Database.Bases.Interfaces;
 using Source.Payment.Models;
 using Source.Payment.Services;
+using Source.Database.Bases.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Source.WebAPI
@@ -106,10 +107,10 @@ namespace Source.WebAPI
 
             // services.AddSingleton<IHostedService>(s => s.GetService<MqttHostedServer>()); 
             services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));
-            services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();
-                
+            services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();                
 
             services.AddTransient<IDbContext, PaymentDbContext>();
+            services.AddTransient<IDbContext, ProductDbContext>();
 
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IPaymentService, PaymentService>();

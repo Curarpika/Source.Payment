@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Source.WebAPI.Interfaces;
+using Source.Database.Bases.Interfaces;
 
-namespace Source.WebAPI.Bases
+namespace Source.Database.Bases.Models
 {
     public sealed class EntityFrameworkUnitOfWork : IUnitOfWork
     {

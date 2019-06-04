@@ -34,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Source.Auth\Source.Auth.csproj" />
     <ProjectReference Include="..\Source.Payment\Source.Payment.csproj" />
+    <ProjectReference Include="..\Source.Product\Source.Product.csproj" />
   </ItemGroup>
 
 </Project>

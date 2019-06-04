@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using Newtonsoft.Json;
-using Source.Payment.Bases;
-using Source.Payment.Models.Base;
-using Source.Payment.Models.Base.Converters;
+using Source.Database.Bases.Models;
+using Source.Database.Bases.Helpers;
+using Source.Database.Bases.Interfaces;
 using Source.Payment.Models.Enums;
 
 namespace Source.Payment

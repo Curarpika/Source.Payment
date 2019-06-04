@@ -298,29 +298,29 @@ namespace Source.WebAPI
         // TODO for Admin only
         public async Task<IActionResult> Dashboard(string OrderBy)
         {
-            var orders =  _paySrv.GetPaymentOrders();
+            var orders = _paySrv.GetPaymentOrders();
 
-            var creditAdded =orders.Where(x=>x.OrderType == OrderType.AddCredit);
-            var creditAddedSum = creditAdded.Sum(x=>x.Amount);
+            var creditAdded = orders.Where(x => x.OrderType == OrderType.AddCredit);
+            var creditAddedSum = creditAdded.Sum(x => x.Amount);
             var creditAddedTotal = creditAdded.Count();
 
-            var creditUsed = orders.Where(x=>x.OrderType == OrderType.Buy && x.PayMethod == PayMethod.Credit);
-            var creditUsedSum = creditUsed.Sum(x=>x.Amount);
+            var creditUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod == PayMethod.Credit);
+            var creditUsedSum = creditUsed.Sum(x => x.Amount);
             var creditUsedTotal = creditUsed.Count();
 
-            var cashUsed = orders.Where(x=>x.OrderType == OrderType.Buy && x.PayMethod != PayMethod.Credit);
-            var cashUsedSum = cashUsed.Sum(x=>x.Amount);
+            var cashUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod != PayMethod.Credit);
+            var cashUsedSum = cashUsed.Sum(x => x.Amount);
             var cashUsedTotal = cashUsed.Count();
             return null;
         }
 
         [EnableCors("CorsPolicy")]
-        public async Task<IActionResult> GetPaymentOrders(string key, int index = 1, int pageSize = 10)
+        public async Task<IActionResult> GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int index = 1, int pageSize = 10)
         {
             try
             {
-                var result = _paySrv.GetPaymentOrders(key, index, pageSize);
-
+                var result = _paySrv.GetPaymentOrders(key, orderType, payMethod, orderState, index, pageSize);
+                
                 var total = result.Count;
                 var data = result.Orders;
 

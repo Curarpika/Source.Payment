@@ -10,11 +10,6 @@
         </template>
       </el-table-column>
       <el-table-column label="产品" prop="content" align="center" min-width="150" />
-      <!-- <el-table-column label="订单类型" align="center" width="150">
-        <template slot-scope="{row}">
-          <el-tag>{{ row.orderType | orderTypeFilter }}</el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column label="支付方式" align="center" width="150">
         <template slot-scope="{row}">
           <el-tag>{{ row.payMethod | payMethodFilter }}</el-tag>
@@ -40,9 +35,10 @@
 <script>
 import { getPaidOrders, processOrder } from '@/api/payment-order'
 import waves from '@/directive/waves'
+import { payMethodKeyValue, orderStateKeyValue} from '@/utils/dict'
 
 export default {
-  name: 'ComplexTable',
+  name: 'ProcessOrder',
   directives: { waves },
   mqtt: {
     'PaidOrders': function(val) {
@@ -54,29 +50,11 @@ export default {
     }
   },
   filters: {
-    // orderTypeFilter(type) {
-    //   const orderTypeMap = {
-    //     0: '充值',
-    //     1: '消费'
-    //   }
-    //   return orderTypeMap[type] || ''
-    // },
     payMethodFilter(method) {
-      const payMethodMap = {
-        0: '支付宝',
-        1: '微信',
-        2: '余额'
-      }
-      return payMethodMap[method] || ''
+      return payMethodKeyValue[method] || ''
     },
     orderStateFilter(state) {
-      const orderStateMap = {
-        0: '等待支付',
-        1: '已支付',
-        2: '支付失败',
-        3: '已核销'
-      }
-      return orderStateMap[state] || ''
+      return orderStateKeyValue[state] || ''
     }
   },
   data() {

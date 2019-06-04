@@ -61,9 +61,9 @@ namespace Source.Payment.Services
 
         public IQueryable<PaymentOrder> GetPaymentOrders()
         {
-             try
+            try
             {
-                return _orderRepo.All();  
+                return _orderRepo.All();
             }
             catch (Exception)
             {
@@ -110,7 +110,7 @@ namespace Source.Payment.Services
             }
         }
 
-        (IQueryable<PaymentOrder> Orders, int Count) IPaymentService.GetPaymentOrders(string key, int index, int pageSize, bool DateTimeDescending)
+        (IQueryable<PaymentOrder> Orders, int Count) IPaymentService.GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int index, int pageSize, bool DateTimeDescending)
         {
             try
             {
@@ -119,6 +119,21 @@ namespace Source.Payment.Services
                 if (!string.IsNullOrEmpty(key))
                 {
                     paidOrders = paidOrders.Where(q => q.Content.Contains(key));
+                }
+
+                if (orderType != null)
+                {
+                    paidOrders = paidOrders.Where(q => q.OrderType == (OrderType)orderType);
+                }
+
+                if (payMethod != null)
+                {
+                    paidOrders = paidOrders.Where(q => q.PayMethod == (PayMethod)payMethod);
+                }
+
+                if (orderState != null)
+                {
+                    paidOrders = paidOrders.Where(q => q.OrderState == (OrderState)orderState);
                 }
 
                 var total = paidOrders.Count();

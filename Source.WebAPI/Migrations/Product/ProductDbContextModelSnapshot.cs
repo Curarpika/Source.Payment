@@ -88,7 +88,9 @@ namespace Source.WebAPI.Migrations.Product
 
                     b.Property<string>("ExcuteAddress");
 
-                    b.Property<DateTime?>("ExcuteDateTime");
+                    b.Property<DateTime?>("ExecuteDateTime");
+
+                    b.Property<DateTime?>("ExecutedDatedTime");
 
                     b.Property<int>("OrderState");
 

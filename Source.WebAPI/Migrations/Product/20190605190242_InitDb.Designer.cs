@@ -10,7 +10,7 @@ using Source.Product.Models;
 namespace Source.WebAPI.Migrations.Product
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20190605184754_InitDb")]
+    [Migration("20190605190242_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,7 +90,9 @@ namespace Source.WebAPI.Migrations.Product
 
                     b.Property<string>("ExcuteAddress");
 
-                    b.Property<DateTime?>("ExcuteDateTime");
+                    b.Property<DateTime?>("ExecuteDateTime");
+
+                    b.Property<DateTime?>("ExecutedDatedTime");
 
                     b.Property<int>("OrderState");
 

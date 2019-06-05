@@ -26,9 +26,10 @@ namespace Source.WebAPI.Migrations.Product
                     Amount = table.Column<decimal>(nullable: true),
                     CreditAmount = table.Column<decimal>(nullable: true),
                     PaymentOrderId = table.Column<Guid>(nullable: true),
+                    ExecuteDateTime = table.Column<DateTime>(nullable: true),
                     OrderState = table.Column<int>(nullable: false),
                     ExcuteAddress = table.Column<string>(nullable: true),
-                    ExcuteDateTime = table.Column<DateTime>(nullable: true)
+                    ExecutedDatedTime = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {

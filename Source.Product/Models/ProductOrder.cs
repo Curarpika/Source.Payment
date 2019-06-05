@@ -21,10 +21,11 @@ namespace Source.Product.Models
         public decimal? Amount { get; set; }
         public decimal? CreditAmount {get;set;}
         public Guid? PaymentOrderId {get;set;}
+        public DateTime? ExecuteDateTime {get;set;}
         public OrderState OrderState { get; set; }
         
         public string ExcuteAddress {get;set;}
-        public DateTime? ExcuteDateTime {get;set;}
+        public DateTime? ExecutedDatedTime {get;set;}
 
         [NotMapped]
         public IList<CartInfo> Carts{ get; set; }

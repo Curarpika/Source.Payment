@@ -10,7 +10,7 @@ using Source.Auth.Models;
 namespace Source.WebAPI.Migrations.BaseAuth
 {
     [DbContext(typeof(BaseAuthDbContext))]
-    [Migration("20190605184747_InitDb")]
+    [Migration("20190605190233_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

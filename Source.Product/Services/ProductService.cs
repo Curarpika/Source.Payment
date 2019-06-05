@@ -171,6 +171,10 @@ namespace Source.Product.Services
                     return null;
                 }
                 order.OrderState = state;
+                if(state == OrderState.Excuting)
+                    order.ExecuteDateTime = DateTime.Now;
+                else if(state == OrderState.Excuted)
+                    order.ExecutedDatedTime = DateTime.Now;
                 _orderRepo.Save();
                 return order;
             }

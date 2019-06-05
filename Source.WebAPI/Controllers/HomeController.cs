@@ -31,6 +31,9 @@ using Source.Payment.Models.Enums;
 using Source.Payment.Services;
 using Source.WebAPI.Filters;
 using Senparc.Weixin;
+using Source.Product.Models;
+using Source.Product.Services;
+using Source.Product.Models.Enums;
 
 namespace Source.WebAPI
 {
@@ -40,17 +43,24 @@ namespace Source.WebAPI
         private readonly IMqttServer _mqttServer;
         private readonly IAuthService _authSrv;
         private readonly IPaymentService _paySrv;
+        
+        private readonly IProductService _prdSrv;
+        private readonly IProductOrderService _orderSrv;
         private static TenPayV3Info _tenPayV3Info;
-        private readonly Business _biz;
+        private readonly Payment.Models.Business _biz;
         public HomeController(IConfiguration config,
          IMqttServer mqttServer,
          IPaymentService paySrv,
+         IProductService prdSrv,
+         IProductOrderService orderSrv,
           IAuthService authSrv)
         {
             _config = config;
             _authSrv = authSrv;
             _paySrv = paySrv;
-            _biz = new Business();
+            _prdSrv = prdSrv;
+            _orderSrv = orderSrv;
+            _biz = new Payment.Models.Business();
             config.GetSection("Business").Bind(_biz);
             _mqttServer = mqttServer;
         }
@@ -123,12 +133,12 @@ namespace Source.WebAPI
                 user = newUser;
 
             }
-            var paidOrders = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy && q.UserId == openId);
+            var paidOrders = _orderSrv.GetPaidOrders().Where(q => (q.OrderType == OrderType.BuyInStore ||q.OrderType == OrderType.BuyOnline)  && q.BuyerIdentity == openId);
 
             // Card
             var jssdkUiPackage = JSSDKHelper.GetJsSdkUiPackage(TenPayV3Info.AppId, TenPayV3Info.AppSecret, Request.AbsoluteUri());
-
             var api_ticket = WxCardApiTicketContainer.TryGetWxCardApiTicket(TenPayV3Info.AppId, TenPayV3Info.AppSecret);
+
             // var openId = HttpContext.Session.GetString("OpenId");
             var timeStamp = TenPayV3Util.GetTimestamp();
             var nonceStr = TenPayV3Util.GetNoncestr();
@@ -195,7 +205,7 @@ namespace Source.WebAPI
         }
 
         [HttpPost("/Home/CreateOrder")]
-        public async Task<IActionResult> CreateOrder(string id, PayMethod method)
+        public async Task<IActionResult> CreateOrder(string id, int quantity, OrderType orderType, [FromBody]CartInfo[] carts)
         {
             try
             {
@@ -206,38 +216,31 @@ namespace Source.WebAPI
                 {
                     return Content("商品信息不存在，或非法进入！1002");
                 }
+                
+                var order = new ProductOrder();
 
-
-                var o = new PaymentOrder()
+                // 线上自助餐厅业务，如果消费选择是自助餐，且购物车有数据
+                if(carts != null && product.ProductType == "Product" && orderType == OrderType.BuyOnline)
                 {
-                    Content = product.Name,
-                    Amount = product.Amount,
-                    Quantity = product.Quantity,
-                    PayMethod = product.CostType == "Cash" ? method : PayMethod.Credit,
-                    OrderType = product.ProductType == "Credit" ? OrderType.AddCredit : OrderType.Buy,
-                    UserId = openId,
-                    OrderState = OrderState.WaitForPayment
-                };
-                var order = _paySrv.CreatePaymentOrder(o);
-
-                if (o.OrderType == OrderType.Buy && method == PayMethod.Credit)
-                {
-                    var result = await CreditPay(order);
-                    return Json(Url.Action("WxPayOrder", "WxPay", new { orderid = order.Id }));
-                }
-                else if (method == PayMethod.Wechat)
-                {
-                    return Json(Url.Action("WxPayOrder", "WxPay", new { orderid = order.Id }));
-                }
-                else if (method == PayMethod.Alipay)
-                {
-                    return Json(Url.Action("JsApi", "Alipay", new { orderid = order.Id }));
-                }
-                else
-                {
-                    return null;
+                    var prds = new List<CartInfo>();
+                    foreach (var c in carts)
+                    {
+                        var cart = _prdSrv.GetProductByIds(c.CartItems.Select(x=>x.ProductId).ToArray()).Select(x=> new CartItem {Product = x, Quantity = c.CartItems.Where(cc=>cc.ProductId == x.Id).FirstOrDefault().Quantity}).ToList();
+                        prds.Add(new CartInfo(){ CartItems = cart, Amount = cart.Sum(x=>x.Product.Price)});
+                    }
+                    order.Snapshot = JsonConvert.SerializeObject(prds);
                 }
 
+                // 自助餐厅，固定价格
+                var amount = product.Amount * quantity;
+
+                order.Content = product.Name;                
+                order.Amount = amount;
+                order.OrderType = product.ProductType == "Credit" ? OrderType.AddCredit : orderType;
+                order.BuyerIdentity = openId;
+                order.OrderState = Product.Models.Enums.OrderState.Ordered;
+                _orderSrv.CreateProductOrder(order);
+                return Json(order);
             }
             catch (Exception ex)
             {
@@ -245,10 +248,55 @@ namespace Source.WebAPI
             }
         }
 
+        [HttpPost("/Home/CreatePaymentOrder")]
+        public async Task<IActionResult> CreatePaymentOrder(Guid orderId, PayMethod method)
+        {
+                var openId = HttpContext.Session.GetString("OpenId");
+                var order = _orderSrv.GetProductOrderById(orderId);
+                if(order == null)
+                {
+                    return Json(Url.Action("ErrorOrder", "Home", new { message = "订单不存在" }));
+                }
+
+                if(order.OrderType == OrderType.AddCredit && method == PayMethod.Credit)
+                {
+                    return Json(Url.Action("ErrorOrder", "Home", new { message = "该商品不支持积分购买" }));
+                }
+
+                // 创建支付订单
+                var pay = new PaymentOrder();
+                pay.Amount = (decimal)order.Amount;
+                pay.PayMethod = method; 
+                pay.UserId = openId;
+                pay.OrderState = Payment.Models.Enums.OrderState.WaitForPayment;
+                pay.OrderId = order.Id;
+                _paySrv.CreatePaymentOrder(pay);
+
+                // 积分支付购买商品
+                if (order.OrderType != OrderType.AddCredit && method == PayMethod.Credit)
+                {
+                    var result = await CreditPay(pay);
+                    return Json(Url.Action("WxPayOrder", "WxPay", new { orderid = order.Id, payid = pay.Id}));
+                }
+                // 微信支付
+                else if (method == PayMethod.Wechat)
+                {
+                    return Json(Url.Action("WxPayOrder", "WxPay", new { orderid = order.Id, payid = pay.Id }));
+                }
+                else if (method == PayMethod.Alipay)
+                {
+                    return Json(Url.Action("JsApi", "Alipay", new { orderid = order.Id, payid = pay.Id }));
+                }
+                else
+                {
+                    return Json(Url.Action("ErrorOrder", "Home", new { message = "支付订单错误" }));
+                }
+        }
+
         [HttpPost("/Home/ProcessOrder")]
         public async Task<IActionResult> ProcessOrder(Guid orderId)
         {
-            var processedOrder = _paySrv.ProcessPaymentOrder(orderId);
+            var processedOrder = _orderSrv.UpdateProductOrder(orderId, Product.Models.Enums.OrderState.Excuted);
             return Json(processedOrder);
         }
 
@@ -283,7 +331,7 @@ namespace Source.WebAPI
         [EnableCors("CorsPolicy")]
         public async Task<IActionResult> GetPaidOrders()
         {
-            var result = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy);
+            var result = _orderSrv.GetPaidOrders().Where(q => q.OrderType == OrderType.BuyOnline || q.OrderType == OrderType.BuyInStore);
             return Json(result);
         }
 
@@ -291,29 +339,11 @@ namespace Source.WebAPI
         public async Task<IActionResult> GetUserOrders()
         {
             var openId = HttpContext.Session.GetString("OpenId");
-            var result = _paySrv.GetPaidOrders().Where(q => q.OrderType == OrderType.Buy && q.UserId == openId);
+            var result = _orderSrv.GetPaidOrders().Where(q => (q.OrderType == OrderType.BuyOnline || q.OrderType == OrderType.BuyInStore) && q.BuyerIdentity == openId);
             return Json(result);
         }
 
         // TODO for Admin only
-        public async Task<IActionResult> Dashboard(string OrderBy)
-        {
-            var orders = _paySrv.GetPaymentOrders();
-
-            var creditAdded = orders.Where(x => x.OrderType == OrderType.AddCredit);
-            var creditAddedSum = creditAdded.Sum(x => x.Amount);
-            var creditAddedTotal = creditAdded.Count();
-
-            var creditUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod == PayMethod.Credit);
-            var creditUsedSum = creditUsed.Sum(x => x.Amount);
-            var creditUsedTotal = creditUsed.Count();
-
-            var cashUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod != PayMethod.Credit);
-            var cashUsedSum = cashUsed.Sum(x => x.Amount);
-            var cashUsedTotal = cashUsed.Count();
-            return null;
-        }
-
         [EnableCors("CorsPolicy")]
         public async Task<IActionResult> GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int pageIndex = 1, int pageSize = 10)
         {

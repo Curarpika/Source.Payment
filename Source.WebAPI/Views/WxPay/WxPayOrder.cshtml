@@ -1,8 +1,11 @@
 ﻿@using Source.Payment.Models.Enums;
 @using Source.Payment.Models;
+@using Source.Product.Models.Enums;
+@using Source.Product.Models;
 @{
     Layout = null;
-    var order = Model != null ? (Source.Payment.Models.PaymentOrder)Model : new Source.Payment.Models.PaymentOrder();
+    var order = ViewData["order"] as ProductOrder;
+    var pay = ViewData["pay"] as PaymentOrder;
 }
 <!DOCTYPE html>
 <html>
@@ -19,37 +22,27 @@
                 <div class="title">商户订单号</div>
                 <div class="content">@GuidEncoder.Encode(order.Id)</div>
             </div>
-            <div class="pay-order-item pay-rows pay-space-between">
-                <div class="title">订单类型</div>
-                <div class="content">@(((OrderType)order.OrderType).GetDescription())</div>
-            </div>
-            <div class="pay-order-item pay-rows pay-space-between">
-                <div class="title">消费名称</div>
-                <div class="content">@order.Content</div>
-            </div>
-            <div class="pay-order-item pay-rows pay-space-between">
-                <div class="title">购买数量</div>
-                <div class="content">@order.Quantity</div>
-            </div>
+
             <div class="pay-order-item pay-rows pay-space-between">
                 <div class="title">总价</div>
                 <div class="content">@order.Amount</div>
             </div>
             <div class="pay-order-item pay-rows pay-space-between">
                 <div class="title">支付方式</div>
-                <div class="content">@(((PayMethod)order.PayMethod).GetDescription())</div>
+                <div class="content">@((PayMethod)pay?.PayMethod).GetDescriptionPay()</div>
             </div>
             <div class="pay-order-item pay-rows pay-space-between">
                 <div class="title">支付状态</div>
-                <div class="content">@(((OrderState)order.OrderState).GetDescription())</div>
+                <div class="content">@((Source.Payment.Models.Enums.OrderState)pay?.OrderState).GetDescriptionPay()</div>
             </div>
             <div class="pay-order-item pay-rows pay-space-between">
                 <div class="title">支付时间</div>
-                <div class="content">@(order.PaidTime == null ? "" : order.PaidTime.Value.ToString("yyyy-MM-dd HH:mm:ss"))</div>
+                <div class="content">@pay?.PaidTime.Value.ToString("yyyy-MM-dd HH:mm:ss")</div>
             </div>
         </div>
-        @if (order.OrderState != OrderState.WaitForPayment)
+        @if (pay.OrderState == Source.Payment.Models.Enums.OrderState.Paid)
         {
+            // TODO 需要考虑订单的当前支付订单支付失败的情况下，直接发起新的支付订单的按钮
             <div class="pay-prompt pay-rows pay-flex-center">支付完成</div>
             <div class="btn-group pay-rows pay-flex-center" onclick="back()">
                 <div class="pay-btn-confirm">

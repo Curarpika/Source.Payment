@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Source.Product.Models;
+using Source.Product.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +11,12 @@ namespace Source.Product.Services
 {
     public interface IProductService
     {
-        (IQueryable<ProductOrder> Orders, int Count)  GetProductOrders(string key, int index, int pageSize = 10, bool DateTimeDescending = true);
-        IQueryable<ProductOrder> GetProductOrders();
-        IQueryable<ProductOrder> GetPaidOrders();
-        ProductOrder GetProductOrderById(Guid id); 
-        // 创建订单
-        ProductOrder CreateProductOrder(ProductOrder order);
+        Models.Product AddProduct(Models.Product prd);
 
-        // 回调更新支付状态
-        ProductOrder UpdateProductResult(Guid id, bool succeed);
+        Models.Product RemoveProduct(Guid prdId);
+        Models.Product GetProductById(Guid prdId);
+        IQueryable<Models.Product> GetProductByIds(Guid[] prdIds);
 
-        // 更新业务处理状态
-        ProductOrder ProcessProductOrder(Guid id);
+        (IQueryable<Models.Product> Products, int Count) GetProducts(string key, int? productType, bool? isAvailable, Guid? supplierId, int pageIndex, int pageSize, bool? dateTimeDescending);
     }
 }

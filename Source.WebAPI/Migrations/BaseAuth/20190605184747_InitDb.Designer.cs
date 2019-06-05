@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Source.Auth.Models;
 
-namespace Source.WebAPI.Migrations.BaseAuthMigrations
+namespace Source.WebAPI.Migrations.BaseAuth
 {
     [DbContext(typeof(BaseAuthDbContext))]
-    [Migration("20190530050743_changedUser")]
-    partial class changedUser
+    [Migration("20190605184747_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

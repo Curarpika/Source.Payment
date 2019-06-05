@@ -61,6 +61,9 @@ using MQTTnet.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Senparc.Weixin.MP.Containers;
+using Source.Product.Services;
+using Source.Product.Models.Enums;
+using Source.Product.Models;
 
 namespace Source.WebAPI.Controllers
 {
@@ -76,20 +79,23 @@ namespace Source.WebAPI.Controllers
     public class WxPayController : Controller
     {
         private static TenPayV3Info _tenPayV3Info;
-        private readonly Business _biz;
+        private readonly Payment.Models.Business _biz;
         private readonly IAuthService _authSrv;
         private readonly IMqttServer _mqttServer;
         private readonly IPaymentService _paySrv;
+        private readonly IProductOrderService _orderSrv;
 
         public WxPayController(IConfiguration config,
         IAuthService authSrv,
+        IProductOrderService orderSrv,
         IMqttServer mqttServer,
         IPaymentService paySrv)
         {
             _mqttServer = mqttServer;
             _paySrv = paySrv;
             _authSrv = authSrv;
-            _biz = new Business();
+            _orderSrv = orderSrv;
+            _biz = new Payment.Models.Business();
             config.GetSection("Business").Bind(_biz);
         }
 
@@ -154,22 +160,23 @@ namespace Source.WebAPI.Controllers
         #region JsApi支付
         //需要OAuth登录
         [CustomOAuth(null, "/WxPay/OAuthCallback")]
-        public ActionResult WxPayOrder(Guid orderid)
+        public ActionResult WxPayOrder(Guid orderid, Guid payid)
         {
             try
             {
                 var openId = HttpContext.Session.GetString("OpenId");
 
-                var order = _paySrv.GetPaymentOrderById(orderid);
+                var order = _orderSrv.GetProductOrderById(orderid);
+                var pay = _paySrv.GetPaymentOrderById(payid);
                 if (order == null)
                 {
                     return NotFound();
                 }
-                string sp_billno = GuidEncoder.Encode(order.Id);
+                string sp_billno = GuidEncoder.Encode(pay.Id);
                 var timeStamp = TenPayV3Util.GetTimestamp();
                 var nonceStr = TenPayV3Util.GetNoncestr();
 
-                var body = orderid.ToString();
+                var body = payid.ToString();
                 var price = (int)(order.Amount * 100);
                 var xmlDataInfo = new TenPayV3UnifiedorderRequestData(TenPayV3Info.AppId, TenPayV3Info.MchId, body, sp_billno, price, HttpContext.UserHostAddress()?.ToString(), TenPayV3Info.TenPayV3Notify, Senparc.Weixin.TenPay.TenPayV3Type.JSAPI, openId, TenPayV3Info.Key, nonceStr);
 
@@ -182,13 +189,13 @@ namespace Source.WebAPI.Controllers
                 ViewData["nonceStr"] = nonceStr;
                 ViewData["package"] = package;
                 ViewData["paySign"] = TenPayV3.GetJsPaySign(TenPayV3Info.AppId, timeStamp, nonceStr, package, TenPayV3Info.Key);
-                ViewData["successUrl"] = Url.Action("WxPayOrder", "WxPay", new { orderid = orderid });
-
-                //临时记录订单信息，留给退款申请接口测试使用
-                HttpContext.Session.SetString("BillNo", sp_billno);
-                HttpContext.Session.SetString("BillFee", price.ToString());
-
-                return View(order);
+                ViewData["successUrl"] = Url.Action("WxPayOrder", "WxPay", new { orderid = orderid, payid = payid });
+                // //临时记录订单信息，留给退款申请接口测试使用
+                // HttpContext.Session.SetString("BillNo", sp_billno);
+                // HttpContext.Session.SetString("BillFee", price.ToString());
+                ViewData["order"] = order;
+                ViewData["pay"] = pay;
+                return View();
             }
             catch (Exception ex)
             {
@@ -243,20 +250,24 @@ namespace Source.WebAPI.Controllers
 
         }
 
-        private async Task<bool> Paid(Guid orderid, bool succeed)
+        // 支付成功，处理业务 并更新订单状态
+        private async Task<bool> ExecuteOrder(Guid orderId, Guid payId, bool succeed)
         {
-            var order = _paySrv.UpdatePaymentResult(orderid, succeed);
+            
+            var order = _orderSrv.GetProductOrderByPaymentId(orderId);
+            _orderSrv.UpdateProductOrder(order.Id, Product.Models.Enums.OrderState.Excuting);
 
-            if (order.OrderState == OrderState.Paid && order.OrderType == OrderType.AddCredit)
+            // 处理积分购买
+            if (order.OrderState == Product.Models.Enums.OrderState.Excuting && order.OrderType == OrderType.AddCredit)
             {
-                var user = _authSrv.GetUserByExternalId(order.UserId, 1);
+                var user = _authSrv.GetUserByExternalId(order.BuyerIdentity, 1);
                 if (user == null)
                     return false;
-                await _authSrv.UpdateCredit(user.ExternalId, true, order.Quantity);
-                _paySrv.ProcessPaymentOrder(orderid);
+                await _authSrv.UpdateCredit(user.ExternalId, true, (int)order.Quantity);
+                _orderSrv.UpdateProductOrder(order.Id, Product.Models.Enums.OrderState.Excuted);
             }
 
-            if (order.OrderState == OrderState.Paid && order.OrderType == OrderType.Buy)
+            if (order.OrderState == Product.Models.Enums.OrderState.Excuting && (order.OrderType == OrderType.BuyInStore || order.OrderType == OrderType.BuyOnline))
             {
                 await SendOrder(order);
             }
@@ -264,7 +275,7 @@ namespace Source.WebAPI.Controllers
             return true;
         }
 
-        private async Task<ActionResult> SendOrder(PaymentOrder order)
+        private async Task<ActionResult> SendOrder(ProductOrder order)
         {
             var serializerSettings = new JsonSerializerSettings();
             serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -293,21 +304,21 @@ namespace Source.WebAPI.Controllers
                 string out_trade_no = resHandler.GetParameter("out_trade_no");
 
                 //TODO id for debug
-                var guid = GuidEncoder.Decode(out_trade_no ?? id);
+                var payid = GuidEncoder.Decode(out_trade_no ?? id);
 
                 //验证请求是否从微信发过来（安全）
                 if (resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS")
                 {
                     res = "success";//正确的订单处理
                     //直到这里，才能认为交易真正成功了，可以进行数据库操作，但是别忘了返回规定格式的消息！
-                    // TODO
+                    var pay = _paySrv.UpdatePaymentResult(payid, true);
 
-                    await Paid(guid, true);
+                    var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
                 }
                 else
                 {
                     res = "wrong";//错误的订单处理
-                    await Paid(guid, true);
+                    var pay = _paySrv.UpdatePaymentResult(payid, false);
                 }
 
                 /* 这里可以进行订单处理的逻辑 */

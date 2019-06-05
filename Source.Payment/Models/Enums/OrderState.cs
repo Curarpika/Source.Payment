@@ -13,8 +13,6 @@ namespace Source.Payment.Models.Enums
         [Description("已支付")]
         Paid = 1,
         [Description("支付失败")]
-        PayFailed = 2,
-        [Description("已核销")]
-        Processed = 3
+        PayFailed = 2
     }
 }

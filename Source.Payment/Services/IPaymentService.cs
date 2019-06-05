@@ -19,8 +19,5 @@ namespace Source.Payment.Services
 
         // 回调更新支付状态
         PaymentOrder UpdatePaymentResult(Guid id, bool succeed);
-
-        // 更新业务处理状态
-        PaymentOrder ProcessPaymentOrder(Guid id);
     }
 }

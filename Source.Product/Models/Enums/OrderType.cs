@@ -4,10 +4,12 @@ namespace Source.Product.Models.Enums
 {
     public enum OrderType
     {
-        [Description("产品购买")]
+        [Description("积分充值")]
         AddCredit = 0,
-        [Description("现金消费")]
-        Buy = 1,
-        Sell = 2
+        [Description("线上消费")]
+        BuyOnline = 1,
+        [Description("线下消费")]
+        BuyInStore = 2,
+        Sell = 3
     }
 }

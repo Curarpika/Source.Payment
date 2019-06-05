@@ -2,18 +2,16 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Source.Payment.Models;
 
-namespace Source.WebAPI.Migrations.PaymentMigrations
+namespace Source.WebAPI.Migrations.Payment
 {
     [DbContext(typeof(PaymentDbContext))]
-    [Migration("20190530090054_ChangedPaymentOrder")]
-    partial class ChangedPaymentOrder
+    partial class PaymentDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,22 +19,20 @@ namespace Source.WebAPI.Migrations.PaymentMigrations
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Source.Payment.PaymentOrder", b =>
+            modelBuilder.Entity("Source.Payment.Models.PaymentOrder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<string>("Content");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedTime");
 
-                    b.Property<int>("OrderState");
+                    b.Property<Guid?>("OrderId");
 
-                    b.Property<int>("OrderType");
+                    b.Property<int>("OrderState");
 
                     b.Property<DateTime?>("PaidTime");
 
@@ -44,9 +40,15 @@ namespace Source.WebAPI.Migrations.PaymentMigrations
 
                     b.Property<string>("PaymentOrderId");
 
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
                     b.Property<string>("UpdatedBy");
 
                     b.Property<DateTime?>("UpdatedTime");
+
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 

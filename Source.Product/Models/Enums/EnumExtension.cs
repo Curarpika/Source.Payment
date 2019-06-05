@@ -9,7 +9,7 @@ namespace Source.Product.Models.Enums
         /// <summary>
         /// 获取枚举的描述信息
         /// </summary>
-        public static string GetDescription(this Enum em)
+        public static string GetDescriptionPrd(this Enum em)
         {
             Type type = em.GetType();
             FieldInfo fd = type.GetField(em.ToString());

@@ -2,18 +2,16 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Source.Auth.Models;
 
-namespace Source.WebAPI.Migrations.BaseAuthMigrations
+namespace Source.WebAPI.Migrations.BaseAuth
 {
     [DbContext(typeof(BaseAuthDbContext))]
-    [Migration("20190523115458_ModifyBaseUser")]
-    partial class ModifyBaseUser
+    partial class BaseAuthDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,12 +137,18 @@ namespace Source.WebAPI.Migrations.BaseAuthMigrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<decimal>("Credit");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
                     b.Property<string>("ExternalId");
+
+                    b.Property<string>("ExternalName");
+
+                    b.Property<int>("ExternalType");
 
                     b.Property<string>("FirstName");
 

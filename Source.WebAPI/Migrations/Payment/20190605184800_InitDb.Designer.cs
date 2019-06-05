@@ -2,16 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Source.Payment.Models;
 
-namespace Source.WebAPI.Migrations.PaymentMigrations
+namespace Source.WebAPI.Migrations.Payment
 {
     [DbContext(typeof(PaymentDbContext))]
-    partial class PaymentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190605184800_InitDb")]
+    partial class InitDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,30 +21,26 @@ namespace Source.WebAPI.Migrations.PaymentMigrations
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Source.Payment.PaymentOrder", b =>
+            modelBuilder.Entity("Source.Payment.Models.PaymentOrder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<string>("Content");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("CreatedTime");
 
-                    b.Property<int>("OrderState");
+                    b.Property<Guid?>("OrderId");
 
-                    b.Property<int>("OrderType");
+                    b.Property<int>("OrderState");
 
                     b.Property<DateTime?>("PaidTime");
 
                     b.Property<int>("PayMethod");
 
                     b.Property<string>("PaymentOrderId");
-
-                    b.Property<int>("Quantity");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()

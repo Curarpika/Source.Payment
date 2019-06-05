@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Source.WebAPI.Migrations.BaseAuthMigrations
+namespace Source.WebAPI.Migrations.BaseAuth
 {
-    public partial class InitialCreate : Migration
+    public partial class InitDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -50,10 +50,11 @@ namespace Source.WebAPI.Migrations.BaseAuthMigrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
+                    Credit = table.Column<decimal>(nullable: false),
                     LastLoginTime = table.Column<DateTime>(nullable: true),
-                    DeptCode = table.Column<int>(nullable: true),
-                    CertNo = table.Column<string>(nullable: true),
-                    ExternalId = table.Column<string>(nullable: true)
+                    ExternalType = table.Column<int>(nullable: false),
+                    ExternalId = table.Column<string>(nullable: true),
+                    ExternalName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -189,13 +190,6 @@ namespace Source.WebAPI.Migrations.BaseAuthMigrations
                 schema: "Security",
                 table: "Base_RoleClaim",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Base_User_CertNo",
-                schema: "Security",
-                table: "Base_User",
-                column: "CertNo",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",

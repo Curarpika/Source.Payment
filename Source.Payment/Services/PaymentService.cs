@@ -71,25 +71,6 @@ namespace Source.Payment.Services
             }
         }
 
-        public PaymentOrder ProcessPaymentOrder(Guid id)
-        {
-            try
-            {
-                var order = _orderRepo.Find(x => x.Id == id).FirstOrDefault();
-                if (order == null)
-                {
-                    return null;
-                }
-                order.OrderState = OrderState.Processed;
-                _orderRepo.Save();
-                return order;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         public PaymentOrder UpdatePaymentResult(Guid id, bool succeed)
         {
             try
@@ -118,12 +99,7 @@ namespace Source.Payment.Services
 
                 if (!string.IsNullOrEmpty(key))
                 {
-                    paidOrders = paidOrders.Where(q => q.Content.Contains(key));
-                }
-
-                if (orderType != null)
-                {
-                    paidOrders = paidOrders.Where(q => q.OrderType == (OrderType)orderType);
+                    paidOrders = paidOrders.Where(q => q.Code.Contains(key));
                 }
 
                 if (payMethod != null)

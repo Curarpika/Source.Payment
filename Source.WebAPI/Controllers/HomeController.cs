@@ -343,14 +343,75 @@ namespace Source.WebAPI
             return Json(result);
         }
 
-        // TODO for Admin only
+        [HttpPost("/Home/Dashboard")]
+        public async Task<IActionResult> Dashboard(DateTime dateStart, DateTime dateEnd)
+        {
+            try
+            {
+                var label = new List<string>();
+                var creditAddedValue = new List<decimal>();
+                var cashUsedValue = new List<decimal>();
+
+                var pay = _paySrv.GetPaymentOrders().Where(q => q.PaidTime >= dateStart.Date && q.PaidTime <= dateEnd.AddDays(1).Date).ToList();
+                var order = _orderSrv.GetProductOrders().Where(q => q.ExecutedDatedTime >= dateStart.Date && q.ExecutedDatedTime <= dateEnd.AddDays(1).Date).ToList();
+                var creditAdded = order.Where(x => x.OrderType == OrderType.AddCredit);
+                var creditUsed = pay.Where(x =>  x.PayMethod == PayMethod.Credit);
+                var cashUsed = pay.Where(x => x.PayMethod != PayMethod.Credit);
+
+                // 当日
+                if (dateStart == dateEnd)
+                {
+                    var hour = 0;
+                    while (hour < 24)
+                    {
+                        label.Add($"{hour.ToString().PadLeft(2, '0')}:00");
+                        creditAddedValue.Add(creditAdded.Where(q => q.ExecutedDatedTime.Value.Date == dateStart.Date && q.ExecutedDatedTime.Value.Hour == hour).Sum(s => s.Amount) ?? 0);
+                        cashUsedValue.Add(cashUsed.Where(q => q.PaidTime.Value.Date == dateStart.Date && q.PaidTime.Value.Hour == hour).Sum(s => s.Amount));
+                        hour = hour + 1;
+                    }
+                }
+                // 按周、月
+                else
+                {
+                    var time = dateStart;
+                    while (time <= dateEnd)
+                    {
+                        label.Add(time.ToString("MM-dd"));
+                        creditAddedValue.Add(creditAdded.Where(q => q.ExecutedDatedTime.Value.Date == time.Date).Sum(s => s.Amount) ?? 0);
+                        cashUsedValue.Add(cashUsed.Where(q => q.PaidTime.Value.Date == time.Date).Sum(s => s.Amount));
+                        time = time.AddDays(1);
+                    }
+                }
+
+                var creditAddedTotal = creditAdded.Count();
+                var creditUsedTotal = creditUsed.Count();
+                var cashUsedTotal = cashUsed.Count();
+
+                var result = new
+                {
+                    label,
+                    creditAddedValue,
+                    creditAddedTotal,
+                    creditUsedTotal,
+                    cashUsedValue,
+                    cashUsedTotal
+                };
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [EnableCors("CorsPolicy")]
         public async Task<IActionResult> GetPaymentOrders(string key, int? orderType, int? payMethod, int? orderState, int pageIndex = 1, int pageSize = 10)
         {
             try
             {
                 var result = _paySrv.GetPaymentOrders(key, orderType, payMethod, orderState, pageIndex, pageSize);
-                
+
                 var total = result.Count;
                 var data = result.Orders;
 

@@ -22,3 +22,10 @@ export function processOrder(data) {
   })
 }
 
+export function dashboard(data) {
+  return request({
+    url: `/Home/Dashboard?dateStart=${data.dateStart}&dateEnd=${data.dateEnd}`,
+    method: 'post'
+  })
+}
+

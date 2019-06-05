@@ -295,23 +295,65 @@ namespace Source.WebAPI
             return Json(result);
         }
 
-        // TODO for Admin only
-        public async Task<IActionResult> Dashboard(string OrderBy)
+        [HttpPost("/Home/Dashboard")]
+        public async Task<IActionResult> Dashboard(DateTime dateStart, DateTime dateEnd)
         {
-            var orders = _paySrv.GetPaymentOrders();
+            try
+            {
+                var label = new List<string>();
+                var creditAddedValue = new List<decimal>();
+                var cashUsedValue = new List<decimal>();
 
-            var creditAdded = orders.Where(x => x.OrderType == OrderType.AddCredit);
-            var creditAddedSum = creditAdded.Sum(x => x.Amount);
-            var creditAddedTotal = creditAdded.Count();
+                var orders = _paySrv.GetPaymentOrders().Where(q => q.PaidTime >= dateStart.Date && q.PaidTime <= dateEnd.AddDays(1).Date).ToList();
+                var creditAdded = orders.Where(x => x.OrderType == OrderType.AddCredit);
+                var creditUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod == PayMethod.Credit);
+                var cashUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod != PayMethod.Credit);
 
-            var creditUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod == PayMethod.Credit);
-            var creditUsedSum = creditUsed.Sum(x => x.Amount);
-            var creditUsedTotal = creditUsed.Count();
+                // 当日
+                if (dateStart == dateEnd)
+                {
+                    var hour = 0;
+                    while (hour < 24)
+                    {
+                        label.Add($"{hour.ToString().PadLeft(2, '0')}:00");
+                        creditAddedValue.Add(creditAdded.Where(q => q.PaidTime.Value.Date == dateStart.Date && q.PaidTime.Value.Hour == hour).Sum(s => s.Amount));
+                        cashUsedValue.Add(cashUsed.Where(q => q.PaidTime.Value.Date == dateStart.Date && q.PaidTime.Value.Hour == hour).Sum(s => s.Amount));
+                        hour = hour + 1;
+                    }
+                }
+                // 按周、月
+                else
+                {
+                    var time = dateStart;
+                    while (time <= dateEnd)
+                    {
+                        label.Add(time.ToString("MM-dd"));
+                        creditAddedValue.Add(creditAdded.Where(q => q.PaidTime.Value.Date == time.Date).Sum(s => s.Amount));
+                        cashUsedValue.Add(cashUsed.Where(q => q.PaidTime.Value.Date == time.Date).Sum(s => s.Amount));
+                        time = time.AddDays(1);
+                    }
+                }
 
-            var cashUsed = orders.Where(x => x.OrderType == OrderType.Buy && x.PayMethod != PayMethod.Credit);
-            var cashUsedSum = cashUsed.Sum(x => x.Amount);
-            var cashUsedTotal = cashUsed.Count();
-            return null;
+                var creditAddedTotal = creditAdded.Count();
+                var creditUsedTotal = creditUsed.Count();
+                var cashUsedTotal = cashUsed.Count();
+
+                var result = new
+                {
+                    label,
+                    creditAddedValue,
+                    creditAddedTotal,
+                    creditUsedTotal,
+                    cashUsedValue,
+                    cashUsedTotal
+                };
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [EnableCors("CorsPolicy")]
@@ -320,7 +362,7 @@ namespace Source.WebAPI
             try
             {
                 var result = _paySrv.GetPaymentOrders(key, orderType, payMethod, orderState, pageIndex, pageSize);
-                
+
                 var total = result.Count;
                 var data = result.Orders;
 

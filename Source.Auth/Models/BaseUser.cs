@@ -26,6 +26,7 @@ namespace Source.Auth.Models
         /// 最后登录时间
         /// </summary>
         public DateTime? LastLoginTime { get; set; }
+        public string Address { get; set; }
 
         // alipay = 0, wechatpay = 1
         public int ExternalType { get; set; }

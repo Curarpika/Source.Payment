@@ -84,6 +84,7 @@ namespace Source.WebAPI.Controllers
         private readonly IMqttServer _mqttServer;
         private readonly IPaymentService _paySrv;
         private readonly IProductOrderService _orderSrv;
+        private readonly string _siteUrl;
 
         public WxPayController(IConfiguration config,
         IAuthService authSrv,
@@ -97,6 +98,7 @@ namespace Source.WebAPI.Controllers
             _orderSrv = orderSrv;
             _biz = new Payment.Models.Business();
             config.GetSection("Business").Bind(_biz);
+            _siteUrl = config.GetSection("SiteUrl").Value;
         }
 
         public static TenPayV3Info TenPayV3Info
@@ -150,7 +152,7 @@ namespace Source.WebAPI.Controllers
                 return RedirectToAction("ProductList");
             }
 
-            var returnUrl = $"http://payment.gaodev.com/WxPay/JsApi?id={id}";
+            var returnUrl = $"{_siteUrl}/WxPay/JsApi?id={id}";
             var state = id;
             var url = OAuthApi.GetAuthorizeUrl(TenPayV3Info.AppId, returnUrl, state, OAuthScope.snsapi_userinfo);
 
@@ -301,12 +303,7 @@ namespace Source.WebAPI.Controllers
 
                 resHandler.SetKey(TenPayV3Info.Key);
                 string out_trade_no = resHandler.GetParameter("out_trade_no");
-
-                //TODO id for debug
-                var payid = id;
-
-                var pay = _paySrv.UpdatePaymentResult(payid, true);
-
+                var pay = _paySrv.UpdatePaymentResult(GuidEncoder.Decode(out_trade_no), true);
                 var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
 
                 // //验证请求是否从微信发过来（安全）
@@ -331,7 +328,7 @@ namespace Source.WebAPI.Controllers
                 {
                     string appId = Config.SenparcWeixinSetting.TenPayV3_AppId;//与微信公众账号后台的AppId设置保持一致，区分大小写。
                     string openId = resHandler.GetParameter("openid");
-                    var templateData = new WeixinTemplate_PaySuccess("http://payment.gaodev.com", "购买商品", "状态：" + return_code);
+                    var templateData = new WeixinTemplate_PaySuccess(_siteUrl, "购买商品", "状态：" + return_code);
 
                     Senparc.Weixin.WeixinTrace.SendCustomLog("支付成功模板消息参数", appId + " , " + openId);
 
@@ -455,7 +452,7 @@ namespace Source.WebAPI.Controllers
                 int totalFee = int.Parse(HttpContext.Session.GetString("BillFee"));
                 int refundFee = totalFee;
                 string opUserId = TenPayV3Info.MchId;
-                var notifyUrl = "http://payment.gaodev.com/TenPayV3/RefundNotifyUrl";
+                var notifyUrl = $"{_siteUrl}/TenPayV3/RefundNotifyUrl";
                 var dataInfo = new TenPayV3RefundRequestData(TenPayV3Info.AppId, TenPayV3Info.MchId, TenPayV3Info.Key,
                     null, nonceStr, null, outTradeNo, outRefundNo, totalFee, refundFee, opUserId, null, notifyUrl: notifyUrl);
 

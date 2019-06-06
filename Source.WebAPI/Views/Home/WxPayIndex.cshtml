@@ -1,6 +1,8 @@
 ﻿@using Senparc.Weixin.MP.AdvancedAPIs.OAuth
 @using Source.Product.Models
 @using Senparc.Weixin.MP.Helpers;
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     Layout = null;
     var user = (OAuthUserInfo)ViewData["userInfo"];
@@ -10,6 +12,7 @@
     var p1 = products.Where(q => q.CostType == "Cash" && q.ProductType == "Product" && q.Quantity == 1).FirstOrDefault();
     var p2 = products.Where(q => q.CostType == "Credit" && q.ProductType == "Product" && q.Quantity == 1).FirstOrDefault();
     var jssdkUiPackage = (JsSdkUiPackage)ViewData["jssdkUiPackage"];
+    var siteUrl = HttpContextAccessor.HttpContext.Session.GetString("SiteUrl");
 }
 <!DOCTYPE html>
 <html>
@@ -132,12 +135,11 @@
                 var productUrl = ''
                 window.location.href = productUrl
             }
-
-            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&quantity=${quantity}&orderType=${orderType}`
+            var url = `@siteUrl/Home/CreateOrder?id=${id}&quantity=${quantity}&orderType=${orderType}`
             post(url, null).then(function (res) {
                 var order = res
 
-                var payurl = `http://payment.gaodev.com/Home/CreatePaymentOrder?orderId=${order.id}&method=${payMethod}`
+                var payurl = `@siteUrl/Home/CreatePaymentOrder?orderId=${order.id}&method=${payMethod}`
                 post(payurl, null).then(function (res) {
                     window.location.href = res
                 }, function (error) {

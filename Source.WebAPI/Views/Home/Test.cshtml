@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = null;
+    var siteUrl = HttpContextAccessor.HttpContext.Session.GetString("SiteUrl");
+    var a = 1;
+}
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+</html>

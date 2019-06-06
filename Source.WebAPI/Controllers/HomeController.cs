@@ -48,6 +48,7 @@ namespace Source.WebAPI
         private readonly IProductOrderService _orderSrv;
         private static TenPayV3Info _tenPayV3Info;
         private readonly Payment.Models.Business _biz;
+        private readonly string _siteUrl; 
         public HomeController(IConfiguration config,
          IMqttServer mqttServer,
          IPaymentService paySrv,
@@ -62,6 +63,8 @@ namespace Source.WebAPI
             _orderSrv = orderSrv;
             _biz = new Payment.Models.Business();
             config.GetSection("Business").Bind(_biz);
+            _siteUrl = config.GetSection("SiteUrl").Value;
+
             _mqttServer = mqttServer;
         }
 
@@ -113,6 +116,8 @@ namespace Source.WebAPI
             // 获取openId
             var openId = HttpContext.Session.GetString("OpenId");
             var accessToken = HttpContext.Session.GetString("accessToken");
+
+            HttpContext.Session.SetString("SiteUrl", _siteUrl);
 
             // 根据openId 查询用户
             var user = _authSrv.GetUserByExternalId(openId, 1);
@@ -242,7 +247,7 @@ namespace Source.WebAPI
 
                 // 自助餐厅，固定价格
                 var amount = product.Amount * quantity;
-                
+
                 order.Quantity = quantity;
                 order.Content = product.Name;                
                 order.Amount = amount;

@@ -1,8 +1,11 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
     Layout = null;
     var biz = ViewData["biz"] != null ? (Source.Payment.Models.Business)ViewData["biz"] : new Source.Payment.Models.Business();
     var products = biz.Products;
     var prices = products.Where(q => q.CostType == "Cash" && q.ProductType == "Credit").ToList();
+    var siteUrl = HttpContextAccessor.HttpContext.Session.GetString("SiteUrl");
 }
 <!DOCTYPE html>
 <html>
@@ -71,11 +74,12 @@
             }
 
             var payMethod = 1
-            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&quantity=1&orderType=${orderType}`
+            var siteUrl = '@siteUrl'
+            var url = `${siteUrl}/Home/CreateOrder?id=${id}&quantity=1&orderType=${orderType}`
             post(url, null).then(function (res) {
                 // TODO 返回了业务订单Json，需要再提交支付订单然后跳转
                 var order = res
-                var payurl = `http://payment.gaodev.com/Home/CreatePaymentOrder?orderId=${order.id}&method=${payMethod}`
+                var payurl = `${siteUrl}/Home/CreatePaymentOrder?orderId=${order.id}&method=${payMethod}`
 
                 post(payurl, null).then(function (res) {
                     window.location.href = res

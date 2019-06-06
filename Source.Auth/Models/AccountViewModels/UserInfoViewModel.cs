@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,12 +24,17 @@ namespace Source.Auth.Midels.AccountViewModels
 
         [Display(Name = "LastName")]
         public string LastName { get; set; }
+        [Display(Name = "ExternalName")]
+        public string ExternalName { get; set; }
+        
+        [Display(Name = "PhoneNumber")]
+        public string PhoneNumber { get; set; }
 
         [Display(Name = "Title")]
         public string Title { get; set; }
 
-        [Display(Name = "PhoneNumber")]
-        public string PhoneNumber { get; set; }
+        [Display(Name = "Address")]
+        public string Address { get; set; }
 
         [Display(Name = "DeptCode")]
         public int? DeptCode { get; set; }
@@ -44,6 +50,7 @@ namespace Source.Auth.Midels.AccountViewModels
 
         [Display(Name = "CertNo")]
         public string CertNo { get; set; }
+        public DateTime? LastLoginTime { get; set; }
 
         [JsonIgnore]
         [Display(Name = "RoleList")]

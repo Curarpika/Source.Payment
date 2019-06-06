@@ -23,7 +23,7 @@ namespace Source.Product.Models
         public Guid? PaymentOrderId {get;set;}
         public DateTime? ExecuteDateTime {get;set;}
         public OrderState OrderState { get; set; }
-        
+        public string Contact {get;set;}
         public string ExcuteAddress {get;set;}
         public DateTime? ExecutedDatedTime {get;set;}
 

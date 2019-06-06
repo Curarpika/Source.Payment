@@ -216,6 +216,8 @@ namespace Source.Auth.Services
                 LastName = user.LastName,
                 FirstName = user.FirstName,
                 FullName = user.FullName,
+                ExternalName = user.ExternalName,
+                Address = user.Address,
                 UserName = user.UserName,
                 PhoneNumber = user.PhoneNumber,
                 RoleList = role

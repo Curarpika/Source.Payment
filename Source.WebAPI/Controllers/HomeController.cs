@@ -123,7 +123,7 @@ namespace Source.WebAPI
             // 用户存在则获取信息，不存在则创建用户
             if (user == null)
             {
-                var newUser = new BaseUser { UserName = openId, ExternalId = openId, ExternalType = 1 };
+                var newUser = new BaseUser { UserName = openId, ExternalId = openId, ExternalType = 1, ExternalName = userInfo.nickname };
                 var result = await _authSrv.CreateUser(newUser, openId);
 
                 if (result.Succeeded)
@@ -190,6 +190,10 @@ namespace Source.WebAPI
         {
             // 获取openId
             var openId = HttpContext.Session.GetString("OpenId");
+            if(string.IsNullOrEmpty(openId))
+            {
+                return Json(Url.Action("Index", "Home"));
+            }
             var type = HttpContext.Session.GetString("IdType");
 
             // 根据openId 查询用户
@@ -204,12 +208,17 @@ namespace Source.WebAPI
             return View();
         }
 
+        [CustomOAuth(null, "/AliPay/OAuthCallback")]
         [HttpPost("/Home/CreateOrder")]
         public async Task<IActionResult> CreateOrder(string id, int quantity, OrderType orderType, [FromBody]CartInfo[] carts)
         {
             try
             {
                 var openId = HttpContext.Session.GetString("OpenId");
+                if(string.IsNullOrEmpty(openId))
+                {
+                    return Json(Url.Action("Index", "Home"));
+                }
                 //获取产品信息
                 var product = _biz.Products.FirstOrDefault(z => z.Id == id);
                 if (product == null)
@@ -239,6 +248,14 @@ namespace Source.WebAPI
                 order.OrderType = product.ProductType == "Credit" ? OrderType.AddCredit : orderType;
                 order.BuyerIdentity = openId;
                 order.OrderState = Product.Models.Enums.OrderState.Ordered;
+
+                // 外卖核销地址
+                if(orderType == OrderType.BuyOnline)
+                {
+                    var user = await _authSrv.GetUserInfo(openId);
+                    order.ExcuteAddress =user.Address;
+                    order.Contact = $"{user.ExternalName} {user.PhoneNumber}";
+                }
                 _orderSrv.CreateProductOrder(order);
                 return Json(order);
             }
@@ -248,10 +265,15 @@ namespace Source.WebAPI
             }
         }
 
+        [CustomOAuth(null, "/AliPay/OAuthCallback")]
         [HttpPost("/Home/CreatePaymentOrder")]
         public async Task<IActionResult> CreatePaymentOrder(Guid orderId, PayMethod method)
         {
                 var openId = HttpContext.Session.GetString("OpenId");
+                if(string.IsNullOrEmpty(openId))
+                {
+                    return Json(Url.Action("Index", "Home"));
+                }
                 var order = _orderSrv.GetProductOrderById(orderId);
                 if(order == null)
                 {
@@ -295,14 +317,50 @@ namespace Source.WebAPI
 
         [HttpPost("/Home/ProcessOrder")]
         public async Task<IActionResult> ProcessOrder(Guid orderId)
-        {
+        {       
             var processedOrder = _orderSrv.UpdateProductOrder(orderId, Product.Models.Enums.OrderState.Excuted);
             return Json(processedOrder);
+        }
+
+        [HttpPost("/Home/UpdateContact")]
+        public async Task<IActionResult> UpdateContact(string address, string phone)
+        {
+            if(string.IsNullOrEmpty(address) || string.IsNullOrEmpty(phone))
+            {
+                return BadRequest();
+            }
+            var openId = HttpContext.Session.GetString("OpenId");
+            if(string.IsNullOrEmpty(openId))
+            {
+                return Json(Url.Action("Index", "Home"));
+            }
+            var user = _authSrv.GetUserByExternalId(openId, 1);
+            user.Address = address;
+            user.PhoneNumber = phone;
+            var result = await _authSrv.UpdateUser(user);
+            return Json(result);
+        }
+
+        [HttpGet("/Home/GetUserInfo")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var openId = HttpContext.Session.GetString("OpenId");
+            if(string.IsNullOrEmpty(openId))
+            {
+                return Json(Url.Action("Index", "Home"));
+            }
+            var user = _authSrv.GetUserInfo(openId);
+            return Json(user);
         }
 
         private async Task<decimal> CreditPay(PaymentOrder order)
         {
             var openId = HttpContext.Session.GetString("OpenId");
+            if(string.IsNullOrEmpty(openId))
+            {
+                throw new ApplicationException("Unauthorized");
+            }
+            
             var type = Int16.Parse(HttpContext.Session.GetString("IdType"));
 
             // 扣除余额

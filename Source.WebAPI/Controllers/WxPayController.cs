@@ -253,9 +253,8 @@ namespace Source.WebAPI.Controllers
         // 支付成功，处理业务 并更新订单状态
         private async Task<bool> ExecuteOrder(Guid orderId, Guid payId, bool succeed)
         {
-            
-            var order = _orderSrv.GetProductOrderByPaymentId(orderId);
-            _orderSrv.UpdateProductOrder(order.Id, Product.Models.Enums.OrderState.Excuting);
+            var order = _orderSrv.GetProductOrderById(orderId);
+            _orderSrv.UpdateProductOrder(order.Id, Product.Models.Enums.OrderState.Excuting, payId);
 
             // 处理积分购买
             if (order.OrderState == Product.Models.Enums.OrderState.Excuting && order.OrderType == OrderType.AddCredit)
@@ -289,7 +288,7 @@ namespace Source.WebAPI.Controllers
         /// JS-SDK支付回调地址（在统一下单接口中设置notify_url）
         /// </summary>
         /// <returns></returns>
-        public async Task<ActionResult> PayNotifyUrl(string id)
+        public async Task<ActionResult> PayNotifyUrl(Guid id)
         {
             try
             {
@@ -304,22 +303,26 @@ namespace Source.WebAPI.Controllers
                 string out_trade_no = resHandler.GetParameter("out_trade_no");
 
                 //TODO id for debug
-                var payid = GuidEncoder.Decode(out_trade_no ?? id);
+                var payid = id;
 
-                //验证请求是否从微信发过来（安全）
-                if (resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS")
-                {
-                    res = "success";//正确的订单处理
-                    //直到这里，才能认为交易真正成功了，可以进行数据库操作，但是别忘了返回规定格式的消息！
-                    var pay = _paySrv.UpdatePaymentResult(payid, true);
+                var pay = _paySrv.UpdatePaymentResult(payid, true);
 
-                    var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
-                }
-                else
-                {
-                    res = "wrong";//错误的订单处理
-                    var pay = _paySrv.UpdatePaymentResult(payid, false);
-                }
+                var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
+
+                // //验证请求是否从微信发过来（安全）
+                // if (resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS")
+                // {
+                //     res = "success";//正确的订单处理
+                //     //直到这里，才能认为交易真正成功了，可以进行数据库操作，但是别忘了返回规定格式的消息！
+                //     var pay = _paySrv.UpdatePaymentResult(payid, true);
+
+                //     var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
+                // }
+                // else
+                // {
+                //     res = "wrong";//错误的订单处理
+                //     var pay = _paySrv.UpdatePaymentResult(payid, false);
+                // }
 
                 /* 这里可以进行订单处理的逻辑 */
 
@@ -332,7 +335,7 @@ namespace Source.WebAPI.Controllers
 
                     Senparc.Weixin.WeixinTrace.SendCustomLog("支付成功模板消息参数", appId + " , " + openId);
 
-                    var result = Senparc.Weixin.MP.AdvancedAPIs.TemplateApi.SendTemplateMessage(appId, openId, templateData);
+                    // var result = Senparc.Weixin.MP.AdvancedAPIs.TemplateApi.SendTemplateMessage(appId, openId, templateData);
                 }
                 catch (Exception ex)
                 {

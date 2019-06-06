@@ -20,6 +20,6 @@ namespace Source.Product.Services
         ProductOrder CreateProductOrder(ProductOrder order);
 
         // 回调更新订单状态
-        ProductOrder UpdateProductOrder(Guid id, OrderState state);
+        ProductOrder UpdateProductOrder(Guid id, OrderState state, Guid? payId = null);
     }
 }

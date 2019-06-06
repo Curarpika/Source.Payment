@@ -242,7 +242,8 @@ namespace Source.WebAPI
 
                 // 自助餐厅，固定价格
                 var amount = product.Amount * quantity;
-
+                
+                order.Quantity = quantity;
                 order.Content = product.Name;                
                 order.Amount = amount;
                 order.OrderType = product.ProductType == "Credit" ? OrderType.AddCredit : orderType;
@@ -353,7 +354,7 @@ namespace Source.WebAPI
             return Json(user);
         }
 
-        private async Task<decimal> CreditPay(PaymentOrder order)
+        private async Task<decimal> CreditPay(PaymentOrder pay)
         {
             var openId = HttpContext.Session.GetString("OpenId");
             if(string.IsNullOrEmpty(openId))
@@ -364,10 +365,13 @@ namespace Source.WebAPI
             var type = Int16.Parse(HttpContext.Session.GetString("IdType"));
 
             // 扣除余额
-            var result = await _authSrv.UpdateCredit(openId, false, order.Amount);
+            var result = await _authSrv.UpdateCredit(openId, false, pay.Amount);
 
-            // 更新订单
-            _paySrv.UpdatePaymentResult(order.Id, true);
+            // 支付完成
+            _paySrv.UpdatePaymentResult(pay.Id, true);
+
+            var order = _orderSrv.GetProductOrderById((Guid)pay.OrderId);
+            _orderSrv.UpdateProductOrder(order.Id, Product.Models.Enums.OrderState.Excuting, pay.Id);
 
             // 发送订单消息
             await SendOrder(order);
@@ -376,7 +380,7 @@ namespace Source.WebAPI
             return result;
         }
 
-        private async Task<ActionResult> SendOrder(PaymentOrder order)
+        private async Task<ActionResult> SendOrder(ProductOrder order)
         {
             var serializerSettings = new JsonSerializerSettings();
             serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

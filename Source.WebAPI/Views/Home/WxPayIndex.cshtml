@@ -64,9 +64,11 @@
             <div class="input-number">
                 <div>自助餐消费</div>
                 <div class="right">
-                    <img class="icon" src="~/img/icon-plus.png" onclick="number(1)" />
-                    <span id="number" class="text">1</span>份
                     <img class="icon" src="~/img/icon-reduce.png" onclick="number(-1)" />
+                        <span id="number" class="text">1</span>份
+                    <img class="icon" src="~/img/icon-plus.png" onclick="number(1)" />
+
+      
                 </div>
             </div>
         </div>
@@ -92,7 +94,7 @@
         </div>
     </div>
     <script>
-        var quantiry = 1
+        var quantity = 1
 
         function select(obj) {
             var buttons = document.getElementsByClassName('button-group-button')
@@ -114,12 +116,12 @@
             document.getElementById('number').innerHTML = number
             document.getElementById('p1Amount').innerHTML = parseFloat("@p1.Amount") * number
             document.getElementById('p2Number').innerHTML = number
-            quantiry = number
+            quantity = number
         }
 
         function order(id, payMethod) {
 
-            if (parseInt('@ViewData["credit"]') < quantiry) {
+            if (parseInt('@ViewData["credit"]') < quantity) {
                 alert('请先充值')
                 return
             }
@@ -131,7 +133,7 @@
                 window.location.href = productUrl
             }
 
-            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&quantity=${quantiry}&orderType=${orderType}`
+            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&quantity=${quantity}&orderType=${orderType}`
             post(url, null).then(function (res) {
                 var order = res
 

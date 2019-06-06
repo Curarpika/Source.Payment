@@ -11,7 +11,6 @@ a {text-decoration: none;}
 .pay-space-between{display:flex; justify-content:space-between;}
 .pay-flex-center{justify-content:center;}
 .pay-flex-vtop{align-items: flex-start;}
-.pay-flex-vcenter{align-items:left;}
 .pay-flex-vbottom{align-items:flex-end;}
 
 /* 卡片组件 */
@@ -32,7 +31,7 @@ a {text-decoration: none;}
 .pay-card-div .body .code-info .codes span {margin: auto;}
 .pay-card-div .body .code-info .codes .tag-out { background:#9BDD4F; font-size:14px; color: #FFF; line-height: 1.8em; padding:2px 6px;}
 .pay-card-div .body .code-info .codes .tag-here { background:#FF9800; font-size:14px; color: #FFF; line-height: 1.8em; padding:2px 6px;}
-.pay-card-div .body .code-info .codes .code {width:75%;text-align: center}
+.pay-card-div .body .code-info .codes .code {text-align: center}
 .pay-card-div .body .code-info .codes .quantity {font-size:14px;}
 .pay-card-div .footer{display:flex; flex-wrap:nowrap; margin-top:8px; justify-content:space-between;}
 .pay-card-div .footer div{width:100%; font-size:12px; line-height:1.8; text-align:center; border-right:1px solid #EEE; color:#5E5E5E;}

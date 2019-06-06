@@ -121,7 +121,7 @@
 
         function order(id, payMethod) {
 
-            if (parseInt('@ViewData["credit"]') < quantity) {
+            if (payMethod == 2 && parseInt('@ViewData["credit"]') < quantity) {
                 alert('请先充值')
                 return
             }

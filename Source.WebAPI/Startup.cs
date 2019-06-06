@@ -33,6 +33,7 @@ using Source.Payment.Services;
 using Swashbuckle.AspNetCore.Swagger;
 using Source.Product.Models;
 using Source.Payment;
+using Source.Product.Services;
 
 namespace Source.WebAPI
 {
@@ -119,7 +120,8 @@ namespace Source.WebAPI
 
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IPaymentService, PaymentService>();
-
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IProductOrderService, ProductService>();
 
             services.AddSenparcGlobalServices(Configuration)//Senparc.CO2NET 全局注册
                 .AddSenparcWeixinServices(Configuration);//Senparc.Weixin 注册

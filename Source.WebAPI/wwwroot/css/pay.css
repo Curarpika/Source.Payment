@@ -11,7 +11,7 @@ a {text-decoration: none;}
 .pay-space-between{display:flex; justify-content:space-between;}
 .pay-flex-center{justify-content:center;}
 .pay-flex-vtop{align-items: flex-start;}
-.pay-flex-vcenter{align-items:center;}
+.pay-flex-vcenter{align-items:left;}
 .pay-flex-vbottom{align-items:flex-end;}
 
 /* 卡片组件 */
@@ -103,4 +103,4 @@ a {text-decoration: none;}
 .form .input-number{display: flex;justify-content:space-between;margin-bottom:10px}
 .form .input-number .right{display: flex;} 
 .form .input-number .right .icon{margin: auto;padding:0 5px;cursor: pointer;} 
-.form .input-numb@import url('file:///D:\EDDY\Desktop\payment\H5Payment\css\css.css');er .right .text{margin: auto;} 
+.form .input-number .right .text{margin: auto;} 

@@ -15,7 +15,7 @@ a {text-decoration: none;}
 .pay-flex-vbottom{align-items:flex-end;}
 
 /* 卡片组件 */
-.pay-card-div{margin-top:20px; margin-bottom:60px; box-shadow:0px 0px 20px #E6E7E9; background:#FFF; padding:11px 13px;}
+.pay-card-div{margin-top:20px; margin-bottom:20px; box-shadow:0px 0px 20px #E6E7E9; background:#FFF; padding:11px 13px;}
 .pay-card-div .top{display:flex; flex-wrap:nowrap; padding-bottom:15px;}
 .pay-card-div .top .avatar{width:60px; height:60px; flex-shrink:0;}
 .pay-card-div .top .avatar .image{width:60px; height:60px; border-radius:40px;}
@@ -26,8 +26,14 @@ a {text-decoration: none;}
 .pay-card-div .top .user-info .cardnumber{color:#FFFFFF; font-size:14px; line-height: 22px; background-color:#FF9800;border-radius: 50px;padding: 0px 10px;}
 .pay-card-div .body{display:flex; flex-wrap:nowrap; padding-bottom:15px;}
 .pay-card-div .body .code-info{ width:100%; margin:15px 15px;}
-.pay-card-div .body .code-info .title{ font-size:16px; font-weight: bold; margin-bottom: 30px;}
-.pay-card-div .body .code-info .codes{ font-size:32px; line-height: 1.8em;}
+.pay-card-div .body .code-info .title{ font-size:16px; font-weight: bold; margin-bottom: 20px;}
+.pay-card-div .body .code-info .code-body{height:120px; overflow-y: auto;}
+.pay-card-div .body .code-info .codes{ font-size:32px; line-height: 1.8em;display: flex;text-align: center;justify-content:space-between;}
+.pay-card-div .body .code-info .codes span {margin: auto;}
+.pay-card-div .body .code-info .codes .tag-out { background:#9BDD4F; font-size:14px; color: #FFF; line-height: 1.8em; padding:2px 6px;}
+.pay-card-div .body .code-info .codes .tag-here { background:#FF9800; font-size:14px; color: #FFF; line-height: 1.8em; padding:2px 6px;}
+.pay-card-div .body .code-info .codes .code {width:75%;text-align: center}
+.pay-card-div .body .code-info .codes .quantity {font-size:14px;}
 .pay-card-div .footer{display:flex; flex-wrap:nowrap; margin-top:8px; justify-content:space-between;}
 .pay-card-div .footer div{width:100%; font-size:12px; line-height:1.8; text-align:center; border-right:1px solid #EEE; color:#5E5E5E;}
 .pay-card-div .footer div:last-child{border:none;}
@@ -41,13 +47,12 @@ a {text-decoration: none;}
 .pay-btn-coupon{box-shadow:0px 0px 8px #FF9800; background:#FF9800;}
 .pay-btn-wx:active{box-shadow:0px 0px 8px #A7F949; background:#A7F949;}
 .pay-btn-coupon:active{box-shadow:0px 0px 8px #FEB13F; background:#FEB13F;}
+.pay-btn-credit{box-shadow:0px 0px 8px #E6E7E9; background:#FFFFFF;}
 
 .btn-group{margin-top: 30px;}
 .pay-btn-confirm{width:110px; text-align: center; padding:8px 25px; box-shadow:0px 0px 8px #5677FC; background:#5677FC;}
 .pay-btn-confirm .btn-title{font-size: 18px; color: #FFFFFF; cursor:pointer;}
 .pay-btn-confirm:active{box-shadow:0px 0px 8px #6F8BFD; background:#6F8BFD;}
-.pay-btn-credit{margin-top: 45px; box-shadow: 0px 0px 8px #E6E7E9; background: #FFFFFF;}
-
 
 /* 购买列表组件 */
 .pay-buy-coupon-title{margin-top: 20px;}
@@ -90,3 +95,12 @@ a {text-decoration: none;}
 .pay-icons-remove:before{content:"\e656";} .pay-icons-edit:before{content:"\e600";} .pay-icons-like:before{content:"\e64a";} 
 .pay-icons-pause:before{content:"\e96b";} .pay-icons-play:before{content:"\e6b1";} .pay-icons-stop:before{content:"\e61b";} 
 .pay-icons-shopping-cart:before{content:"\e633";} .pay-icons-close:before{content:"\e617";}
+
+/* 表单 */
+.form .button-group{display: flex;justify-content:flex-end;margin-bottom:10px}
+.form .button-group .default{box-shadow:0px 0px 2px #E9E9E9; background:#FFFFFF;padding:2px 12px;cursor: pointer;}
+.form .button-group .select{box-shadow:0px 0px 2px #FF9800; background:#FF9800;color:#FFF;padding:2px 12px;cursor: pointer;}
+.form .input-number{display: flex;justify-content:space-between;margin-bottom:10px}
+.form .input-number .right{display: flex;} 
+.form .input-number .right .icon{margin: auto;padding:0 5px;cursor: pointer;} 
+.form .input-numb@import url('file:///D:\EDDY\Desktop\payment\H5Payment\css\css.css');er .right .text{margin: auto;} 

@@ -1,10 +1,10 @@
 ﻿@using Senparc.Weixin.MP.AdvancedAPIs.OAuth
-@using Source.Payment.Models
+@using Source.Product.Models
 @using Senparc.Weixin.MP.Helpers;
 @{
     Layout = null;
     var user = (OAuthUserInfo)ViewData["userInfo"];
-    var orders = (IQueryable<PaymentOrder>)ViewData["paidOrders"];
+    var orders = (IQueryable<ProductOrder>)ViewData["paidOrders"];
     var biz = ViewData["biz"] != null ? (Source.Payment.Models.Business)ViewData["biz"] : new Source.Payment.Models.Business();
     var products = biz.Products;
     var p1 = products.Where(q => q.CostType == "Cash" && q.ProductType == "Product" && q.Quantity == 1).FirstOrDefault();
@@ -42,25 +42,45 @@
                 <div class="code-info">
                     <div class="content pay-columns pay-flex-vcenter">
                         <div class="title">我的取餐码</div>
-                        @foreach (var o in orders)
-                        {
-                            <div class="codes">@o.Code</div>
-                        }
+                        <div class="code-body">
+                            @foreach (var o in orders)
+                            {
+                                <div class="codes">
+                                    <span class="tag-out">@o.Content</span>
+                                    <span class="code">@GuidEncoder.Encode(o.Id).Substring(0, 4).ToUpper();</span>
+                                    <span class="quantity">@(o.Quantity)份</span>
+                                </div>
+                            }
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="form">
+            <div class="button-group">
+                <div class="button-group-button default" onclick="select(this)">外卖</div>
+                <div class="button-group-button select" onclick="select(this)">堂食</div>
+            </div>
+            <div class="input-number">
+                <div>自助餐消费</div>
+                <div class="right">
+                    <img class="icon" src="~/img/icon-plus.png" onclick="number(1)" />
+                    <span id="number" class="text">1</span>份
+                    <img class="icon" src="~/img/icon-reduce.png" onclick="number(-1)" />
                 </div>
             </div>
         </div>
         <div class="pay-btn pay-btn-wx" onclick="order('@p1.Id',1)">
             <div class="pay-rows pay-space-between">
                 <div class="btn-name">微信支付</div>
-                <div class="btn-amount">￥@p1.Amount</div>
+                <div class="btn-amount">￥<span id="p1Amount">@p1.Amount</span></div>
             </div>
         </div>
 
         <div class="pay-btn pay-btn-coupon" onclick="order('@p2.Id',2)">
             <div class="pay-rows pay-space-between">
                 <div class="btn-name">餐券支付</div>
-                <div class="btn-amount">1 餐券</div>
+                <div class="btn-amount"><span id="p2Number">1</span> 餐券</div>
             </div>
         </div>
 
@@ -72,13 +92,57 @@
         </div>
     </div>
     <script>
+        var quantiry = 1
+
+        function select(obj) {
+            var buttons = document.getElementsByClassName('button-group-button')
+
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].className = buttons[i].className.replace('select', 'default')
+            }
+
+            obj.className = obj.className.replace('default', 'select')
+        }
+
+
+        function number(num) {
+            var number = parseInt(document.getElementById('number').innerHTML)
+            number = number + num
+            if (number <= 0) {
+                number = 1
+            }
+            document.getElementById('number').innerHTML = number
+            document.getElementById('p1Amount').innerHTML = parseFloat("@p1.Amount") * number
+            document.getElementById('p2Number').innerHTML = number
+            quantiry = number
+        }
+
         function order(id, payMethod) {
-            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&method=${payMethod}`;
+
+            if (parseInt('@ViewData["credit"]') < quantiry) {
+                alert('请先充值')
+                return
+            }
+
+            var orderType = 2
+            if(orderType == 1)
+            {
+                var productUrl = ''
+                window.location.href = productUrl
+            }
+
+            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&quantity=${quantiry}&orderType=${orderType}`
             post(url, null).then(function (res) {
-                window.location.href = res;
-            }, function (error) {
-                console.error('出错了', error);
-            });
+                var order = res
+
+                var payurl = `http://payment.gaodev.com/Home/CreatePaymentOrder?orderId=${order.id}&method=${payMethod}`
+                post(payurl, null).then(function (res) {
+                    window.location.href = res
+                }, function (error) {
+                    console.error('出错了', error)
+                })
+            })
+
         }
 
         function toBuy() {

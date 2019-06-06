@@ -28,6 +28,7 @@ namespace Source.WebAPI.Migrations.Product
                     PaymentOrderId = table.Column<Guid>(nullable: true),
                     ExecuteDateTime = table.Column<DateTime>(nullable: true),
                     OrderState = table.Column<int>(nullable: false),
+                    Contact = table.Column<string>(nullable: true),
                     ExcuteAddress = table.Column<string>(nullable: true),
                     ExecutedDatedTime = table.Column<DateTime>(nullable: true)
                 },

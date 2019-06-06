@@ -10,7 +10,7 @@ using Source.Product.Models;
 namespace Source.WebAPI.Migrations.Product
 {
     [DbContext(typeof(ProductDbContext))]
-    [Migration("20190605190242_InitDb")]
+    [Migration("20190606132851_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,8 @@ namespace Source.WebAPI.Migrations.Product
                     b.Property<Guid?>("BuyerId");
 
                     b.Property<string>("BuyerIdentity");
+
+                    b.Property<string>("Contact");
 
                     b.Property<string>("Content");
 

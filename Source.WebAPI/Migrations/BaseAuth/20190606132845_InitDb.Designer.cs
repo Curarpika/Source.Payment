@@ -10,7 +10,7 @@ using Source.Auth.Models;
 namespace Source.WebAPI.Migrations.BaseAuth
 {
     [DbContext(typeof(BaseAuthDbContext))]
-    [Migration("20190605190233_InitDb")]
+    [Migration("20190606132845_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,6 +135,8 @@ namespace Source.WebAPI.Migrations.BaseAuth
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
+
+                    b.Property<string>("Address");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();

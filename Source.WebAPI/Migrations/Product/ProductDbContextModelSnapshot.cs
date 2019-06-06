@@ -78,6 +78,8 @@ namespace Source.WebAPI.Migrations.Product
 
                     b.Property<string>("BuyerIdentity");
 
+                    b.Property<string>("Contact");
+
                     b.Property<string>("Content");
 
                     b.Property<string>("CreatedBy");

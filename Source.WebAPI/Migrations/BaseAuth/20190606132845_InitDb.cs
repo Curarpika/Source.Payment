@@ -52,6 +52,7 @@ namespace Source.WebAPI.Migrations.BaseAuth
                     LastName = table.Column<string>(nullable: true),
                     Credit = table.Column<decimal>(nullable: false),
                     LastLoginTime = table.Column<DateTime>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
                     ExternalType = table.Column<int>(nullable: false),
                     ExternalId = table.Column<string>(nullable: true),
                     ExternalName = table.Column<string>(nullable: true)

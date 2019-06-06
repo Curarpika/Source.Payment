@@ -10,7 +10,7 @@ using Source.Payment.Models;
 namespace Source.WebAPI.Migrations.Payment
 {
     [DbContext(typeof(PaymentDbContext))]
-    [Migration("20190605190250_InitDb")]
+    [Migration("20190606132857_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -134,6 +134,8 @@ namespace Source.WebAPI.Migrations.BaseAuth
 
                     b.Property<int>("AccessFailedCount");
 
+                    b.Property<string>("Address");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 

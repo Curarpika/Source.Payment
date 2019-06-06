@@ -62,32 +62,26 @@
                 return
             }
             // 积分充值： AddCredit = 0, 线上消费 BuyOnline = 1, 线下消费 BuyInStore = 2
-            // 如果线上消费即外卖则跳转Prod uct/ProductList 选择菜品， 增加 'CartInfo' FromBody参数
+            // 如果线上消费即外卖则跳转Product/ProductList 选择菜品， 增加 'CartInfo' FromBody参数
             // 否则直接创建业务订单，成功后创建支付订单
             var orderType = 2
-            if(orderType = 1)
-            {
+            if (orderType == 1) {
                 var productUrl = ''
                 window.location.href = productUrl
             }
 
             var payMethod = 1
-            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&?orderType=${orderType}&method=${payMethod}`
+            var url = `http://payment.gaodev.com/Home/CreateOrder?id=${id}&quantity=1&orderType=${orderType}`
             post(url, null).then(function (res) {
                 // TODO 返回了业务订单Json，需要再提交支付订单然后跳转
-                var order = Json.Parse(res)
+                var order = res
                 var payurl = `http://payment.gaodev.com/Home/CreatePaymentOrder?orderId=${order.id}&method=${payMethod}`
-                
-                post(url, null).then(function (res) {
-                    var order = Json.Parse(res)
-                    var payurl = `http://payment.gaodev.com/Home/CreatePaymentOrder?orderId=${order.id}&method=${payMethod}`
-                    post(url, null).then(function (res) {
+
+                post(payurl, null).then(function (res) {
                     window.location.href = res
                 }, function (error) {
                     console.error('出错了', error)
                 })
-            }, function (error) {
-                console.error('出错了', error)
             })
         }
     </script>

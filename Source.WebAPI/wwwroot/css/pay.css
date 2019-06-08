@@ -39,7 +39,7 @@ a {text-decoration: none;}
 .pay-card-div .footer .pay-icons:before{padding-right:8px;}
 
 /* 支付按钮组件 */
-.pay-btn{padding:15px 25px; margin-bottom: 15px; cursor:pointer;}
+.pay-btn{padding:15px 25px; margin-bottom: 15px;}
 .pay-btn .btn-name{font-size:16px;}
 .pay-btn .btn-amount{font-size:16px;}
 .pay-btn-wx{box-shadow:0px 0px 8px #9BDD4F; background:#9BDD4F;}
@@ -50,14 +50,14 @@ a {text-decoration: none;}
 
 .btn-group{margin-top: 30px;}
 .pay-btn-confirm{width:110px; text-align: center; padding:8px 25px; box-shadow:0px 0px 8px #5677FC; background:#5677FC;}
-.pay-btn-confirm .btn-title{font-size: 18px; color: #FFFFFF; cursor:pointer;}
+.pay-btn-confirm .btn-title{font-size: 18px; color: #FFFFFF;}
 .pay-btn-confirm:active{box-shadow:0px 0px 8px #6F8BFD; background:#6F8BFD;}
 
 /* 购买列表组件 */
 .pay-buy-coupon-title{margin-top: 20px;}
 .pay-buy-coupon-title .text{font-size:16px;font-weight: bold; color: #6F6F6F; margin-left: 4px;}
 .pay-buy-coupon-list{margin-top: 10px;}
-.pay-buy-coupon-list .pay-buy-coupon{padding:15px 25px; margin-bottom: 15px;cursor:pointer;}
+.pay-buy-coupon-list .pay-buy-coupon{padding:15px 25px; margin-bottom: 15px;}
 .pay-buy-coupon-list .pay-buy-coupon .name{font-size:16px;}
 .pay-buy-coupon-list .pay-buy-coupon .amount{font-size:16px;}
 .pay-buy-coupon-list .select{box-shadow:0px 0px 8px #FF9800; background:#FF9800;}
@@ -97,9 +97,9 @@ a {text-decoration: none;}
 
 /* 表单 */
 .form .button-group{display: flex;justify-content:flex-end;margin-bottom:10px}
-.form .button-group .default{box-shadow:0px 0px 2px #E9E9E9; background:#FFFFFF;padding:2px 12px;cursor: pointer;}
-.form .button-group .select{box-shadow:0px 0px 2px #FF9800; background:#FF9800;color:#FFF;padding:2px 12px;cursor: pointer;}
+.form .button-group .default{box-shadow:0px 0px 2px #E9E9E9; background:#FFFFFF;padding:2px 12px;}
+.form .button-group .select{box-shadow:0px 0px 2px #FF9800; background:#FF9800;color:#FFF;padding:2px 12px;}
 .form .input-number{display: flex;justify-content:space-between;margin-bottom:10px}
 .form .input-number .right{display: flex;} 
-.form .input-number .right .icon{margin: auto;padding:0 5px;cursor: pointer;} 
+.form .input-number .right .icon{margin: auto;padding:0 5px;} 
 .form .input-number .right .text{margin: auto;} 

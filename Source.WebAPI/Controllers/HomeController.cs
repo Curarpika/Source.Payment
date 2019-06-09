@@ -250,7 +250,7 @@ namespace Source.WebAPI
                 }
 
                 // 自助餐厅，固定价格
-                var amount = product.Amount * quantity;
+                var amount = product.ProductType == "Credit" ? product.Amount : product.Amount * quantity;
 
                 order.Quantity = quantity;
                 order.Content = product.Name;                

@@ -298,30 +298,16 @@ namespace Source.WebAPI.Controllers
 
                 string return_code = resHandler.GetParameter("return_code");
                 string return_msg = resHandler.GetParameter("return_msg");
-
-                string res = null;
-
-                resHandler.SetKey(TenPayV3Info.Key);
-                string out_trade_no = resHandler.GetParameter("out_trade_no");
-                var pay = _paySrv.UpdatePaymentResult(GuidEncoder.Decode(out_trade_no), true);
-                var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
-
-                // //验证请求是否从微信发过来（安全）
-                // if (resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS")
-                // {
-                //     res = "success";//正确的订单处理
-                //     //直到这里，才能认为交易真正成功了，可以进行数据库操作，但是别忘了返回规定格式的消息！
-                //     var pay = _paySrv.UpdatePaymentResult(payid, true);
-
-                //     var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
-                // }
-                // else
-                // {
-                //     res = "wrong";//错误的订单处理
-                //     var pay = _paySrv.UpdatePaymentResult(payid, false);
-                // }
+                resHandler.SetKey(TenPayV3Info.Key);     
+                bool succeed = resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS";
 
                 /* 这里可以进行订单处理的逻辑 */
+                string out_trade_no = resHandler.GetParameter("out_trade_no");
+                var pay = _paySrv.UpdatePaymentResult(GuidEncoder.Decode(out_trade_no), succeed);
+                if(succeed)
+                {
+                    var result = await ExecuteOrder((Guid)pay.OrderId, pay.Id, true);
+                }
 
                 //发送支付成功的模板消息
                 try

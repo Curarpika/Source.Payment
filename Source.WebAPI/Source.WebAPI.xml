@@ -4,37 +4,6 @@
         <name>Source.WebAPI</name>
     </assembly>
     <members>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.Index(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="returnUrl">用户尝试进入的需要登录的页面</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.UserInfoCallback(System.String,System.String,System.String)">
-            <summary>
-            OAuthScope.snsapi_userinfo方式回调
-            </summary>
-            <param name="code"></param>
-            <param name="state"></param>
-            <param name="returnUrl">用户最初尝试进入的页面</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.BaseCallback(System.String,System.String,System.String)">
-            <summary>
-            OAuthScope.snsapi_base方式回调
-            </summary>
-            <param name="code"></param>
-            <param name="state"></param>
-            <param name="returnUrl">用户最初尝试进入的页面</param>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.OAuth2Controller.TestReturnUrl">
-            <summary>
-            测试ReturnUrl
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:Source.WebAPI.Controllers.WxPayController">
             <summary>
             根据官方的Webforms Demo改写，所以可以看到直接Response.Write()之类的用法，实际项目中不提倡这么做。
@@ -49,30 +18,6 @@
         <member name="M:Source.WebAPI.Controllers.WxPayController.PayNotifyUrl(System.Guid)">
             <summary>
             JS-SDK支付回调地址（在统一下单接口中设置notify_url）
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WxPayController.OrderQuery">
-            <summary>
-            订单查询
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WxPayController.CloseOrder">
-            <summary>
-            关闭订单接口
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WxPayController.Refund">
-            <summary>
-            退款申请接口
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Source.WebAPI.Controllers.WxPayController.RefundNotifyUrl">
-            <summary>
-            退款通知地址
             </summary>
             <returns></returns>
         </member>

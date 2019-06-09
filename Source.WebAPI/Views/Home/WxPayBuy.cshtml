@@ -12,7 +12,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Source - 微信支付</title>
+    <title>铼客中式自助餐 - 支付</title>
     <link rel="stylesheet" type="text/css" href="~/css/pay.css" />
     <script src="~/js/source.ajax.js"></script>
 </head>
@@ -25,7 +25,7 @@
             @{
                 for (int i = 0; i < prices.Count(); i++)
                 {
-                    <div pid="@prices[i].Id" amount="@prices[i].Amount" class="pay-buy-coupon @(i==0?"select":"default")" onclick="select(this)">
+                    <div pid="@prices[i].Id" amount="@prices[i].Amount" quantity="@prices[i].Quantity" class="pay-buy-coupon @(i==0?"select":"default")" onclick="select(this)">
                         <div class="pay-rows pay-space-between">
                             <div class="name">消费券  x @prices[i].Quantity</div>
                             <div class="amount">￥@prices[i].Amount</div>
@@ -42,6 +42,7 @@
     </div>
     <script>
         var selectedPriceId = '@prices[0].Id'
+        var quantity = '@prices[0].Quantity'
 
         function select(obj) {
             var prices = document.getElementsByClassName('pay-buy-coupon')
@@ -55,11 +56,14 @@
             var amount = document.getElementById('amount')
             amount.innerHTML = obj.attributes.amount.value
             selectedPriceId = obj.attributes.pid.value
+            quantity = obj.attributes.quantity.value
         }
 
         function order() {
 
             var id = selectedPriceId
+            var _quantity = quantity
+
             if (id == null) {
                 alert("请选择套餐")
                 return
@@ -75,7 +79,7 @@
 
             var payMethod = 1
             var siteUrl = '@siteUrl'
-            var url = `${siteUrl}/Home/CreateOrder?id=${id}&quantity=1&orderType=${orderType}`
+            var url = `${siteUrl}/Home/CreateOrder?id=${id}&quantity=${_quantity}&orderType=${orderType}`
             post(url, null).then(function (res) {
                 // TODO 返回了业务订单Json，需要再提交支付订单然后跳转
                 var order = res

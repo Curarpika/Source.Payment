@@ -6,15 +6,11 @@
       <el-table-column label="序号" type="index" align="center" width="70" />
       <el-table-column label="支付时间" align="center" width="150">
         <template slot-scope="{row}">
-          <span>{{ row.paidTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.executeDateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品" prop="content" align="center" min-width="150" />
-      <el-table-column label="支付方式" align="center" width="150">
-        <template slot-scope="{row}">
-          <el-tag>{{ row.payMethod | payMethodFilter }}</el-tag>
-        </template>
-      </el-table-column>
+      <el-table-column label="数量" prop="quantity" align="center" width="150"/>
       <el-table-column label="订单状态" align="center" width="150">
         <template slot-scope="{row}">
           <el-tag>{{ row.orderState | orderStateFilter }}</el-tag>
@@ -35,7 +31,7 @@
 <script>
 import { getPaidOrders, processOrder } from '@/api/payment-order'
 import waves from '@/directive/waves'
-import { payMethodKeyValue, orderStateKeyValue} from '@/utils/dict'
+import { orderStateKeyValue} from '@/utils/dict'
 
 export default {
   name: 'ProcessOrder',
@@ -50,9 +46,6 @@ export default {
     }
   },
   filters: {
-    payMethodFilter(method) {
-      return payMethodKeyValue[method] || ''
-    },
     orderStateFilter(state) {
       return orderStateKeyValue[state] || ''
     }

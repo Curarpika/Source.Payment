@@ -1,10 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container" >
-      <el-input v-model="listQuery.key" placeholder="产品" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.orderType" placeholder="订单类型" clearable style="width: 120px" class="filter-item">
-        <el-option v-for="item in orderTypeOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select>
       <el-select v-model="listQuery.payMethod" placeholder="支付方式" clearable style="width: 120px" class="filter-item">
         <el-option v-for="item in payMethodOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
@@ -18,28 +14,22 @@
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;">
       <el-table-column label="序号" type="index" align="center" width="70" />
-      <el-table-column label="下单时间" align="center" width="150">
+      <el-table-column label="下单时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.createdTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品" prop="content" align="center" min-width="150" />
-      <el-table-column label="订单类型" align="center" width="150">
-        <template slot-scope="{row}">
-          <el-tag>{{ row.orderType | orderTypeFilter }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="支付方式" align="center" width="150">
+      <el-table-column label="支付方式" align="center">
         <template slot-scope="{row}">
           <el-tag>{{ row.payMethod | payMethodFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态" align="center" width="150">
+      <el-table-column label="订单状态" align="center">
         <template slot-scope="{row}">
           <el-tag>{{ row.orderState | orderStateFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="金额" prop="amount" align="center" width="150" />
+      <el-table-column label="金额" prop="amount" align="center" />
     </el-table>
 
      <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageIndex" :limit.sync="listQuery.pageSize" @pagination="getList" />
@@ -51,16 +41,13 @@
 import { getPaymentOrders } from '@/api/payment-order'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
-import { orderTypeOptions, payMethodOptions,orderStateOptions, orderTypeKeyValue, payMethodKeyValue, orderStateKeyValue} from '@/utils/dict'
+import { payMethodOptions,orderStateOptions, payMethodKeyValue, orderStateKeyValue} from '@/utils/dict'
 
 export default {
   name: 'PaymentOrder',
   components: { Pagination },
   directives: { waves },
   filters: {
-    orderTypeFilter(type) {
-      return orderTypeKeyValue[type] || ''
-    },
     payMethodFilter(method) {
       return payMethodKeyValue[method] || ''
     },
@@ -82,7 +69,6 @@ export default {
         pageIndex: 1,
         pageSize: 10
       },
-      orderTypeOptions, 
       payMethodOptions,
       orderStateOptions,
     }

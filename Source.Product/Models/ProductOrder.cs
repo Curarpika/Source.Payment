@@ -29,6 +29,15 @@ namespace Source.Product.Models
 
         [NotMapped]
         public IList<CartInfo> Carts{ get; set; }
+
+        [NotMapped]
+        public string Code
+        {
+            get
+            {
+                return GuidEncoder.Encode(Id).Substring(0, 4).ToUpper();
+            }
+        }
     }
 
     public class CartInfo

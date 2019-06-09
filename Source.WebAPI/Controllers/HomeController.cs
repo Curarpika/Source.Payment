@@ -83,26 +83,26 @@ namespace Source.WebAPI
             }
         }
 
-        public async Task<IActionResult> Test()
-        {
-            var factory = new MqttFactory();
-            var mqttClient = factory.CreateMqttClient();
-            var mqttOptions = new MqttClientOptionsBuilder()
-                    .WithClientId("1fasdfioifiagsf")
-                    .WithKeepAlivePeriod(TimeSpan.FromHours(24))
-                    .WithKeepAliveSendInterval(TimeSpan.FromSeconds(5))
-                    .WithCleanSession()
-                    .WithWebSocketServer("127.0.0.1/mqtt")
-                    .Build();
-            await mqttClient.ConnectAsync(mqttOptions, new System.Threading.CancellationToken());
+        // public async Task<IActionResult> Test()
+        // {
+        //     var factory = new MqttFactory();
+        //     var mqttClient = factory.CreateMqttClient();
+        //     var mqttOptions = new MqttClientOptionsBuilder()
+        //             .WithClientId("1fasdfioifiagsf")
+        //             .WithKeepAlivePeriod(TimeSpan.FromHours(24))
+        //             .WithKeepAliveSendInterval(TimeSpan.FromSeconds(5))
+        //             .WithCleanSession()
+        //             .WithWebSocketServer("127.0.0.1/mqtt")
+        //             .Build();
+        //     await mqttClient.ConnectAsync(mqttOptions, new System.Threading.CancellationToken());
 
-            var serializerSettings = new JsonSerializerSettings();
-            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            var json = JsonConvert.SerializeObject(_paySrv.GetPaidOrders().FirstOrDefault(), serializerSettings);
+        //     var serializerSettings = new JsonSerializerSettings();
+        //     serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        //     var json = JsonConvert.SerializeObject(_paySrv.GetPaidOrders().FirstOrDefault(), serializerSettings);
 
-            await _mqttServer.PublishAsync("PaidOrders", json);
-            return View();
-        }
+        //     await _mqttServer.PublishAsync("PaidOrders", json);
+        //     return View();
+        // }
 
         public async Task<IActionResult> Index()
         {
@@ -115,6 +115,10 @@ namespace Source.WebAPI
         {
             // 获取openId
             var openId = HttpContext.Session.GetString("OpenId");
+            if(string.IsNullOrEmpty(openId))
+            {
+                return Json(Url.Action("Index", "Home"));
+            }
             var accessToken = HttpContext.Session.GetString("accessToken");
 
             HttpContext.Session.SetString("SiteUrl", _siteUrl);

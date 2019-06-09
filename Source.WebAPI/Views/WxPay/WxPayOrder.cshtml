@@ -52,16 +52,16 @@
         }
         else
         {
-            @*<div id="pay" class="btn-group pay-rows pay-flex-center">
+            <div id="pay" class="btn-group pay-rows pay-flex-center">
                 <div class="pay-btn-confirm">
                     <div class="btn-title">支付</div>
                 </div>
-            </div>*@
+            </div>
         }
     </div>
     <script>
         document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
-            //document.getElementById("pay").onclick=function(){
+            document.getElementById("pay").onclick=function(){
                 WeixinJSBridge.invoke('getBrandWCPayRequest', {
                     "appId": "@ViewData["appId"]", //公众号名称，由商户传入
                     "timeStamp": "@ViewData["timeStamp"]", //时间戳
@@ -82,7 +82,7 @@
                         alert("支付失败，错误代码" + res.err_msg + "!");
                     }
                 });
-            //}
+            }
         }, false);
 
         function back() {

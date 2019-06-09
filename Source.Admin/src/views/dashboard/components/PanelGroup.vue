@@ -7,9 +7,12 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            充值笔数
+            充值金额 <count-to :start-val="0" :end-val="chartData.creditAddedAmount" :duration="2000" class="card-panel-num" />
           </div>
-          <count-to :start-val="0" :end-val="chartData.creditAddedTotal" :duration="2000" class="card-panel-num" />
+          <div class="card-panel-text">
+            充值数量 <count-to :start-val="0" :end-val="chartData.creditAddedQuantity" :duration="2000" class="card-panel-num" />
+          </div>
+          <!-- <count-to :start-val="0" :end-val="chartData.creditAddedTotal" :duration="2000" class="card-panel-num" /> -->
         </div>
       </div>
     </el-col>
@@ -20,9 +23,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            余额支付笔数
+            余额支付数量
           </div>
-          <count-to :start-val="0" :end-val="chartData.creditUsedTotal" :duration="2000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="chartData.creditUsedAmount" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -33,9 +36,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            现金支付笔数
+            现金支付金额
           </div>
-          <count-to :start-val="0" :end-val="chartData.cashUsedTotal" :duration="2000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="chartData.cashUsedAmount" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>

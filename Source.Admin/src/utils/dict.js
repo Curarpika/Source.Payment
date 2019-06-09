@@ -1,6 +1,7 @@
 export const orderTypeOptions = [
-  { key: 0, label: '充值' },
-  { key: 1, label: '消费' }
+  { key: 0, label: '积分充值' },
+  { key: 1, label: '线上消费' },
+  { key: 2, label: '线下消费' }
 ]
 
 export const orderTypeKeyValue = orderTypeOptions.reduce((acc, cur) => {
@@ -22,11 +23,21 @@ export const payMethodKeyValue = payMethodOptions.reduce((acc, cur) => {
 export const orderStateOptions = [
   { key: 0, label: '等待支付' },
   { key: 1, label: '已支付' },
-  { key: 2, label: '支付失败' },
-  { key: 3, label: '已核销' }
+  { key: 2, label: '支付失败' }
 ]
 
 export const orderStateKeyValue = orderStateOptions.reduce((acc, cur) => {
+  acc[cur.key] = cur.label
+  return acc
+}, {})
+
+export const productOrderStateOptions = [
+  { key: 0, label: '已下单' },
+  { key: 1, label: '执行中' },
+  { key: 2, label: '订单完成' }
+]
+
+export const productOrderStateKeyValue = productOrderStateOptions.reduce((acc, cur) => {
   acc[cur.key] = cur.label
   return acc
 }, {})

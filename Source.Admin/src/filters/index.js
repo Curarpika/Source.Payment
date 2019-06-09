@@ -66,3 +66,13 @@ export function toThousandFilter(num) {
 export function uppercaseFirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
+
+/* 金额格式化 */
+export function moneyFormatter(money) {
+  if (money) {
+    money = (money.toFixed(2) + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    return money
+  } else {
+    return '-'
+  }
+}

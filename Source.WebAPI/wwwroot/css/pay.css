@@ -26,8 +26,8 @@ a {text-decoration: none;}
 .pay-card-div .body{display:flex; flex-wrap:nowrap; padding-bottom:15px;}
 .pay-card-div .body .code-info{ width:100%; margin:15px 15px;}
 .pay-card-div .body .code-info .title{ font-size:16px; font-weight: bold; margin-bottom: 20px;}
-.pay-card-div .body .code-info .code-body{height:120px; overflow-y: auto;}
-.pay-card-div .body .code-info .codes{ font-size:32px; line-height: 1.8em;display: flex; flex-direction:row; justify-content:space-between;}
+.pay-card-div .body .code-info .code-body{height:100px; overflow-y: auto;}
+.pay-card-div .body .code-info .codes{ font-size:32px; line-height: 1.5em;display: flex; flex-direction:row; justify-content:space-between;}
 .pay-card-div .body .code-info .codes .tag-out { background:#9BDD4F; font-size:14px; color: #FFF; line-height: 1.8em; padding:2px 6px;align-self: center;}
 .pay-card-div .body .code-info .codes .tag-here { background:#FF9800; font-size:14px; color: #FFF; line-height: 1.8em; padding:2px 6px;align-self: center;}
 .pay-card-div .body .code-info .codes .code {text-align: center}
@@ -41,6 +41,8 @@ a {text-decoration: none;}
 .pay-btn{padding:15px 25px; margin-bottom: 15px;}
 .pay-btn .btn-name{font-size:16px;}
 .pay-btn .btn-amount{font-size:16px;}
+.pay-btn .btn-amount .old-amount{color:#888888;padding-right: 10px;text-decoration:line-through }
+.pay-btn .btn-amount .new-amount{color:red }
 .pay-btn-wx{box-shadow:0px 0px 8px #9BDD4F; background:#9BDD4F;}
 .pay-btn-coupon{box-shadow:0px 0px 8px #FF9800; background:#FF9800;}
 .pay-btn-wx:active{box-shadow:0px 0px 8px #A7F949; background:#A7F949;}

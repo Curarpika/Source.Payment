@@ -376,229 +376,229 @@ namespace Source.WebAPI.Controllers
 
         #endregion
 
-        #region 订单及退款
+//         #region 订单及退款
 
-        /// <summary>
-        /// 订单查询
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult OrderQuery()
-        {
-            string nonceStr = TenPayV3Util.GetNoncestr();
-            RequestHandler packageReqHandler = new RequestHandler(null);
+//         /// <summary>
+//         /// 订单查询
+//         /// </summary>
+//         /// <returns></returns>
+//         public ActionResult OrderQuery()
+//         {
+//             string nonceStr = TenPayV3Util.GetNoncestr();
+//             RequestHandler packageReqHandler = new RequestHandler(null);
 
-            //设置package订单参数
-            packageReqHandler.SetParameter("appid", TenPayV3Info.AppId);		  //公众账号ID
-            packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);		  //商户号
-            packageReqHandler.SetParameter("transaction_id", "");       //填入微信订单号
-            packageReqHandler.SetParameter("out_trade_no", "");         //填入商家订单号
-            packageReqHandler.SetParameter("nonce_str", nonceStr);             //随机字符串
-            string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
-            packageReqHandler.SetParameter("sign", sign);	                    //签名
+//             //设置package订单参数
+//             packageReqHandler.SetParameter("appid", TenPayV3Info.AppId);		  //公众账号ID
+//             packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);		  //商户号
+//             packageReqHandler.SetParameter("transaction_id", "");       //填入微信订单号
+//             packageReqHandler.SetParameter("out_trade_no", "");         //填入商家订单号
+//             packageReqHandler.SetParameter("nonce_str", nonceStr);             //随机字符串
+//             string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
+//             packageReqHandler.SetParameter("sign", sign);	                    //签名
 
-            string data = packageReqHandler.ParseXML();
+//             string data = packageReqHandler.ParseXML();
 
-            var result = TenPayV3.OrderQuery(data);
-            var res = XDocument.Parse(result);
-            string openid = res.Element("xml").Element("sign").Value;
+//             var result = TenPayV3.OrderQuery(data);
+//             var res = XDocument.Parse(result);
+//             string openid = res.Element("xml").Element("sign").Value;
 
-            return Content(openid);
-        }
+//             return Content(openid);
+//         }
 
-        /// <summary>
-        /// 关闭订单接口
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult CloseOrder()
-        {
-            string nonceStr = TenPayV3Util.GetNoncestr();
-            RequestHandler packageReqHandler = new RequestHandler(null);
+//         /// <summary>
+//         /// 关闭订单接口
+//         /// </summary>
+//         /// <returns></returns>
+//         public ActionResult CloseOrder()
+//         {
+//             string nonceStr = TenPayV3Util.GetNoncestr();
+//             RequestHandler packageReqHandler = new RequestHandler(null);
 
-            //设置package订单参数
-            packageReqHandler.SetParameter("appid", TenPayV3Info.AppId);		  //公众账号ID
-            packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);		  //商户号
-            packageReqHandler.SetParameter("out_trade_no", "");                 //填入商家订单号
-            packageReqHandler.SetParameter("nonce_str", nonceStr);              //随机字符串
-            string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
-            packageReqHandler.SetParameter("sign", sign);	                    //签名
+//             //设置package订单参数
+//             packageReqHandler.SetParameter("appid", TenPayV3Info.AppId);		  //公众账号ID
+//             packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);		  //商户号
+//             packageReqHandler.SetParameter("out_trade_no", "");                 //填入商家订单号
+//             packageReqHandler.SetParameter("nonce_str", nonceStr);              //随机字符串
+//             string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
+//             packageReqHandler.SetParameter("sign", sign);	                    //签名
 
-            string data = packageReqHandler.ParseXML();
+//             string data = packageReqHandler.ParseXML();
 
-            var result = TenPayV3.CloseOrder(data);
-            var res = XDocument.Parse(result);
-            string openid = res.Element("xml").Element("openid").Value;
+//             var result = TenPayV3.CloseOrder(data);
+//             var res = XDocument.Parse(result);
+//             string openid = res.Element("xml").Element("openid").Value;
 
-            return Content(openid);
-        }
+//             return Content(openid);
+//         }
 
-        /// <summary>
-        /// 退款申请接口
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Refund()
-        {
-            try
-            {
-                WeixinTrace.SendCustomLog("进入退款流程", "1");
+//         /// <summary>
+//         /// 退款申请接口
+//         /// </summary>
+//         /// <returns></returns>
+//         public ActionResult Refund()
+//         {
+//             try
+//             {
+//                 WeixinTrace.SendCustomLog("进入退款流程", "1");
 
-                string nonceStr = TenPayV3Util.GetNoncestr();
+//                 string nonceStr = TenPayV3Util.GetNoncestr();
 
-                string outTradeNo = HttpContext.Session.GetString("BillNo");
+//                 string outTradeNo = HttpContext.Session.GetString("BillNo");
 
-                WeixinTrace.SendCustomLog("进入退款流程", "2 outTradeNo：" + outTradeNo);
-
-
-                string outRefundNo = "OutRefunNo-" + SystemTime.Now.Ticks;
-                int totalFee = int.Parse(HttpContext.Session.GetString("BillFee"));
-                int refundFee = totalFee;
-                string opUserId = TenPayV3Info.MchId;
-                var notifyUrl = $"{_siteUrl}/TenPayV3/RefundNotifyUrl";
-                var dataInfo = new TenPayV3RefundRequestData(TenPayV3Info.AppId, TenPayV3Info.MchId, TenPayV3Info.Key,
-                    null, nonceStr, null, outTradeNo, outRefundNo, totalFee, refundFee, opUserId, null, notifyUrl: notifyUrl);
-
-                #region 旧方法
-                //var cert = @"D:\cert\apiclient_cert_SenparcRobot.p12";//根据自己的证书位置修改
-                //var password = TenPayV3Info.MchId;//默认为商户号，建议修改
-                //var result = TenPayV3.Refund(dataInfo, cert, password);
-                #endregion
-
-                #region 新方法（Senparc.Weixin v6.4.4+）
-                var result = TenPayV3.Refund(dataInfo);//证书地址、密码，在配置文件中设置，并在注册微信支付信息时自动记录
-                #endregion
-
-                WeixinTrace.SendCustomLog("进入退款流程", "3 Result：" + result.ToJson());
+//                 WeixinTrace.SendCustomLog("进入退款流程", "2 outTradeNo：" + outTradeNo);
 
 
-                return Content(string.Format("退款结果：{0} {1}。您可以刷新当前页面查看最新结果。", result.result_code, result.err_code_des));
-                //return Json(result, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                WeixinTrace.WeixinExceptionLog(new WeixinException(ex.Message, ex));
+//                 string outRefundNo = "OutRefunNo-" + SystemTime.Now.Ticks;
+//                 int totalFee = int.Parse(HttpContext.Session.GetString("BillFee"));
+//                 int refundFee = totalFee;
+//                 string opUserId = TenPayV3Info.MchId;
+//                 var notifyUrl = $"{_siteUrl}/TenPayV3/RefundNotifyUrl";
+//                 var dataInfo = new TenPayV3RefundRequestData(TenPayV3Info.AppId, TenPayV3Info.MchId, TenPayV3Info.Key,
+//                     null, nonceStr, null, outTradeNo, outRefundNo, totalFee, refundFee, opUserId, null, notifyUrl: notifyUrl);
 
-                throw;
-            }
+//                 #region 旧方法
+//                 //var cert = @"D:\cert\apiclient_cert_SenparcRobot.p12";//根据自己的证书位置修改
+//                 //var password = TenPayV3Info.MchId;//默认为商户号，建议修改
+//                 //var result = TenPayV3.Refund(dataInfo, cert, password);
+//                 #endregion
+
+//                 #region 新方法（Senparc.Weixin v6.4.4+）
+//                 var result = TenPayV3.Refund(dataInfo);//证书地址、密码，在配置文件中设置，并在注册微信支付信息时自动记录
+//                 #endregion
+
+//                 WeixinTrace.SendCustomLog("进入退款流程", "3 Result：" + result.ToJson());
 
 
-            #region 原始方法
+//                 return Content(string.Format("退款结果：{0} {1}。您可以刷新当前页面查看最新结果。", result.result_code, result.err_code_des));
+//                 //return Json(result, JsonRequestBehavior.AllowGet);
+//             }
+//             catch (Exception ex)
+//             {
+//                 WeixinTrace.WeixinExceptionLog(new WeixinException(ex.Message, ex));
 
-            //RequestHandler packageReqHandler = new RequestHandler(null);
+//                 throw;
+//             }
 
-            //设置package订单参数
-            //packageReqHandler.SetParameter("appid", TenPayV3Info.AppId);		 //公众账号ID
-            //packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);	     //商户号
-            //packageReqHandler.SetParameter("out_trade_no", "124138540220170502163706139412"); //填入商家订单号
-            ////packageReqHandler.SetParameter("out_refund_no", "");                //填入退款订单号
-            //packageReqHandler.SetParameter("total_fee", "");                    //填入总金额
-            //packageReqHandler.SetParameter("refund_fee", "100");                //填入退款金额
-            //packageReqHandler.SetParameter("op_user_id", TenPayV3Info.MchId);   //操作员Id，默认就是商户号
-            //packageReqHandler.SetParameter("nonce_str", nonceStr);              //随机字符串
-            //string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
-            //packageReqHandler.SetParameter("sign", sign);	                    //签名
-            ////退款需要post的数据
-            //string data = packageReqHandler.ParseXML();
 
-            ////退款接口地址
-            //string url = "http://api.mch.weixin.qq.com/secapi/pay/refund";
-            ////本地或者服务器的证书位置（证书在微信支付申请成功发来的通知邮件中）
-            //string cert = @"D:\cert\apiclient_cert_SenparcRobot.p12";
-            ////私钥（在安装证书时设置）
-            //string password = TenPayV3Info.MchId;
-            //ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
-            ////调用证书
-            //X509Certificate2 cer = new X509Certificate2(cert, password, X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.MachineKeySet);
+//             #region 原始方法
 
-            //#region 发起post请求
-            //HttpWebRequest webrequest = (HttpWebRequest)HttpWebRequest.Create(url);
-            //webrequest.ClientCertificates.Add(cer);
-            //webrequest.Method = "post";
+//             //RequestHandler packageReqHandler = new RequestHandler(null);
 
-            //byte[] postdatabyte = Encoding.UTF8.GetBytes(data);
-            //webrequest.ContentLength = postdatabyte.Length;
-            //Stream stream;
-            //stream = webrequest.GetRequestStream();
-            //stream.Write(postdatabyte, 0, postdatabyte.Length);
-            //stream.Close();
+//             //设置package订单参数
+//             //packageReqHandler.SetParameter("appid", TenPayV3Info.AppId);		 //公众账号ID
+//             //packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);	     //商户号
+//             //packageReqHandler.SetParameter("out_trade_no", "124138540220170502163706139412"); //填入商家订单号
+//             ////packageReqHandler.SetParameter("out_refund_no", "");                //填入退款订单号
+//             //packageReqHandler.SetParameter("total_fee", "");                    //填入总金额
+//             //packageReqHandler.SetParameter("refund_fee", "100");                //填入退款金额
+//             //packageReqHandler.SetParameter("op_user_id", TenPayV3Info.MchId);   //操作员Id，默认就是商户号
+//             //packageReqHandler.SetParameter("nonce_str", nonceStr);              //随机字符串
+//             //string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
+//             //packageReqHandler.SetParameter("sign", sign);	                    //签名
+//             ////退款需要post的数据
+//             //string data = packageReqHandler.ParseXML();
 
-            //HttpWebResponse httpWebResponse = (HttpWebResponse)webrequest.GetResponse();
-            //StreamReader streamReader = new StreamReader(httpWebResponse.GetResponseStream());
-            //string responseContent = streamReader.ReadToEnd();
-            //#endregion
+//             ////退款接口地址
+//             //string url = "http://api.mch.weixin.qq.com/secapi/pay/refund";
+//             ////本地或者服务器的证书位置（证书在微信支付申请成功发来的通知邮件中）
+//             //string cert = @"D:\cert\apiclient_cert_SenparcRobot.p12";
+//             ////私钥（在安装证书时设置）
+//             //string password = TenPayV3Info.MchId;
+//             //ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+//             ////调用证书
+//             //X509Certificate2 cer = new X509Certificate2(cert, password, X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.MachineKeySet);
 
-            //// var res = XDocument.Parse(responseContent);
-            ////string openid = res.Element("xml").Element("out_refund_no").Value;
-            //return Content("申请成功：<br>" + HttpUtility.RequestUtility.HtmlEncode(responseContent));
+//             //#region 发起post请求
+//             //HttpWebRequest webrequest = (HttpWebRequest)HttpWebRequest.Create(url);
+//             //webrequest.ClientCertificates.Add(cer);
+//             //webrequest.Method = "post";
 
-            #endregion
+//             //byte[] postdatabyte = Encoding.UTF8.GetBytes(data);
+//             //webrequest.ContentLength = postdatabyte.Length;
+//             //Stream stream;
+//             //stream = webrequest.GetRequestStream();
+//             //stream.Write(postdatabyte, 0, postdatabyte.Length);
+//             //stream.Close();
 
-        }
+//             //HttpWebResponse httpWebResponse = (HttpWebResponse)webrequest.GetResponse();
+//             //StreamReader streamReader = new StreamReader(httpWebResponse.GetResponseStream());
+//             //string responseContent = streamReader.ReadToEnd();
+//             //#endregion
 
-        /// <summary>
-        /// 退款通知地址
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult RefundNotifyUrl()
-        {
-            WeixinTrace.SendCustomLog("RefundNotifyUrl被访问", "IP" + HttpContext.UserHostAddress()?.ToString());
+//             //// var res = XDocument.Parse(responseContent);
+//             ////string openid = res.Element("xml").Element("out_refund_no").Value;
+//             //return Content("申请成功：<br>" + HttpUtility.RequestUtility.HtmlEncode(responseContent));
 
-            string responseCode = "FAIL";
-            string responseMsg = "FAIL";
-            try
-            {
-                ResponseHandler resHandler = new ResponseHandler(null);
+//             #endregion
 
-                string return_code = resHandler.GetParameter("return_code");
-                string return_msg = resHandler.GetParameter("return_msg");
+//         }
 
-                WeixinTrace.SendCustomLog("跟踪RefundNotifyUrl信息", resHandler.ParseXML());
+//         /// <summary>
+//         /// 退款通知地址
+//         /// </summary>
+//         /// <returns></returns>
+//         public ActionResult RefundNotifyUrl()
+//         {
+//             WeixinTrace.SendCustomLog("RefundNotifyUrl被访问", "IP" + HttpContext.UserHostAddress()?.ToString());
 
-                if (return_code == "SUCCESS")
-                {
-                    responseCode = "SUCCESS";
-                    responseMsg = "OK";
+//             string responseCode = "FAIL";
+//             string responseMsg = "FAIL";
+//             try
+//             {
+//                 ResponseHandler resHandler = new ResponseHandler(null);
 
-                    string appId = resHandler.GetParameter("appid");
-                    string mch_id = resHandler.GetParameter("mch_id");
-                    string nonce_str = resHandler.GetParameter("nonce_str");
-                    string req_info = resHandler.GetParameter("req_info");
+//                 string return_code = resHandler.GetParameter("return_code");
+//                 string return_msg = resHandler.GetParameter("return_msg");
 
-                    var decodeReqInfo = TenPayV3Util.DecodeRefundReqInfo(req_info, TenPayV3Info.Key);
-                    var decodeDoc = XDocument.Parse(decodeReqInfo);
+//                 WeixinTrace.SendCustomLog("跟踪RefundNotifyUrl信息", resHandler.ParseXML());
 
-                    //获取接口中需要用到的信息
-                    string transaction_id = decodeDoc.Root.Element("transaction_id").Value;
-                    string out_trade_no = decodeDoc.Root.Element("out_trade_no").Value;
-                    string refund_id = decodeDoc.Root.Element("refund_id").Value;
-                    string out_refund_no = decodeDoc.Root.Element("out_refund_no").Value;
-                    int total_fee = int.Parse(decodeDoc.Root.Element("total_fee").Value);
-                    int? settlement_total_fee = decodeDoc.Root.Element("settlement_total_fee") != null
-                            ? int.Parse(decodeDoc.Root.Element("settlement_total_fee").Value)
-                            : null as int?;
-                    int refund_fee = int.Parse(decodeDoc.Root.Element("refund_fee").Value);
-                    int tosettlement_refund_feetal_fee = int.Parse(decodeDoc.Root.Element("settlement_refund_fee").Value);
-                    string refund_status = decodeDoc.Root.Element("refund_status").Value;
-                    string success_time = decodeDoc.Root.Element("success_time").Value;
-                    string refund_recv_accout = decodeDoc.Root.Element("refund_recv_accout").Value;
-                    string refund_account = decodeDoc.Root.Element("refund_account").Value;
-                    string refund_request_source = decodeDoc.Root.Element("refund_request_source").Value;
+//                 if (return_code == "SUCCESS")
+//                 {
+//                     responseCode = "SUCCESS";
+//                     responseMsg = "OK";
 
-                    //进行业务处理
-                }
-            }
-            catch (Exception ex)
-            {
-                responseMsg = ex.Message;
-                WeixinTrace.WeixinExceptionLog(new WeixinException(ex.Message, ex));
-            }
+//                     string appId = resHandler.GetParameter("appid");
+//                     string mch_id = resHandler.GetParameter("mch_id");
+//                     string nonce_str = resHandler.GetParameter("nonce_str");
+//                     string req_info = resHandler.GetParameter("req_info");
 
-            string xml = string.Format(@"<xml>
-<return_code><![CDATA[{0}]]></return_code>
-<return_msg><![CDATA[{1}]]></return_msg>
-</xml>", responseCode, responseMsg);
-            return Content(xml, "text/xml");
-        }
+//                     var decodeReqInfo = TenPayV3Util.DecodeRefundReqInfo(req_info, TenPayV3Info.Key);
+//                     var decodeDoc = XDocument.Parse(decodeReqInfo);
 
-        #endregion
+//                     //获取接口中需要用到的信息
+//                     string transaction_id = decodeDoc.Root.Element("transaction_id").Value;
+//                     string out_trade_no = decodeDoc.Root.Element("out_trade_no").Value;
+//                     string refund_id = decodeDoc.Root.Element("refund_id").Value;
+//                     string out_refund_no = decodeDoc.Root.Element("out_refund_no").Value;
+//                     int total_fee = int.Parse(decodeDoc.Root.Element("total_fee").Value);
+//                     int? settlement_total_fee = decodeDoc.Root.Element("settlement_total_fee") != null
+//                             ? int.Parse(decodeDoc.Root.Element("settlement_total_fee").Value)
+//                             : null as int?;
+//                     int refund_fee = int.Parse(decodeDoc.Root.Element("refund_fee").Value);
+//                     int tosettlement_refund_feetal_fee = int.Parse(decodeDoc.Root.Element("settlement_refund_fee").Value);
+//                     string refund_status = decodeDoc.Root.Element("refund_status").Value;
+//                     string success_time = decodeDoc.Root.Element("success_time").Value;
+//                     string refund_recv_accout = decodeDoc.Root.Element("refund_recv_accout").Value;
+//                     string refund_account = decodeDoc.Root.Element("refund_account").Value;
+//                     string refund_request_source = decodeDoc.Root.Element("refund_request_source").Value;
+
+//                     //进行业务处理
+//                 }
+//             }
+//             catch (Exception ex)
+//             {
+//                 responseMsg = ex.Message;
+//                 WeixinTrace.WeixinExceptionLog(new WeixinException(ex.Message, ex));
+//             }
+
+//             string xml = string.Format(@"<xml>
+// <return_code><![CDATA[{0}]]></return_code>
+// <return_msg><![CDATA[{1}]]></return_msg>
+// </xml>", responseCode, responseMsg);
+//             return Content(xml, "text/xml");
+//         }
+
+//         #endregion
 
         public IActionResult Card()
         {

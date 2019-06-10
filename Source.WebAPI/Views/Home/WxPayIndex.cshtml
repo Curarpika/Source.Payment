@@ -117,7 +117,7 @@
                 number = 1
             }
             document.getElementById('number').innerHTML = number
-            document.getElementById('p1Amount').innerHTML = '￥' + parseFloat("@p1.Amount") * number
+            document.getElementById('p1Amount').innerHTML = '￥' + (parseFloat("@p1.Amount") * number).toFixed(2)
             document.getElementById('p2Number').innerHTML = number
             quantity = number
         }

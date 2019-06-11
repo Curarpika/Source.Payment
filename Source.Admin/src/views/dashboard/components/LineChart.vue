@@ -30,7 +30,7 @@ export default {
       type: Object,
       required: true
     },
-    lineChartTitle:{
+    lineChartTitle: {
       type: String,
       default: ''
     }
@@ -66,23 +66,23 @@ export default {
       this.setOptions(this.chartData)
     },
     setOptions({ label, creditAddedValue, cashUsedValue } = {}) {
-      if (!label || !creditAddedValue|| !cashUsedValue) {
+      if (!label || !creditAddedValue || !cashUsedValue) {
         return
       }
       this.chart.setOption({
-        title : {
+        title: {
           text: `消费金额统计 ${this.lineChartTitle}`
         },
         toolbox: {
-        show : true,
-        feature : {
-            mark : {show: true},
-            dataView : {show: true, readOnly: false},
-            magicType : {show: true, type: ['line', 'bar']},
-            restore : {show: true},
-            saveAsImage : {show: true}
-        }
-    },
+          show: true,
+          feature: {
+            mark: { show: true },
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
         xAxis: {
           data: label,
           boundaryGap: false,
@@ -108,12 +108,12 @@ export default {
           axisTick: {
             show: false
           },
-          axisLabel : {
+          axisLabel: {
             formatter: '{value} 元'
           }
         },
         legend: {
-          data: ['充值金额','现金支付']
+          data: ['充值金额', '现金支付']
         },
         series: [{
           name: '充值金额', itemStyle: {
@@ -131,7 +131,7 @@ export default {
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
-          {
+        {
           name: '现金支付',
           smooth: true,
           type: 'line',
